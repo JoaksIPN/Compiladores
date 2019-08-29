@@ -141,6 +141,9 @@ class AFN {
 		this.estados.push(e1);
 		this.estados.push(e2);
 		return this;
+	}
 
+	Concatenar(afn){
+		
 	}
 }
