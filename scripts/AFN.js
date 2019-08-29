@@ -86,4 +86,78 @@ class AFN {
 		return this;
 
 	}
+
+	CerraduraPositiva(){
+
+		var t1, t2, t3; //Transiciones nuevas
+		var e; //Estado auxuliar
+		//Obtener el estado inicial
+		for(var i=0; i<this.estados.length;i++){
+			if(this.estados[i].start)
+				e = this.estados[i].id;
+		}
+		//Transicion epsilon del estado final al anicial
+		t1 =  new Transicion(numTransiciones++,'ɛ','ɛ',e);
+
+		//Agregar transicion al estado final
+		for(var i=0; i<this.estados.length; i++){
+			if(this.estados[i].end)
+				this.estados[i].transiciones.push(t1);
+		}
+		//Crear un nuevo estado inicial
+		 var ei = new Estado(numEstados++, true, false);
+
+		 //Quitar true al otro estado inicial
+		 for(var i=0; i<this.estados.length;i++){
+	 		if(this.estados[i].start){
+	 			this.estados[i].start = false;
+				t2 = new Transicion(numTransiciones++,'ɛ','ɛ',this.estados[i].id)
+			}
+	 	}
+		//Agregar transision a ei
+		ei.transiciones.push(t2)
+
+		//Crear un nuevo estado final
+		var ef = new Estado(numEstados++,false,true);
+		//Eliminar el antiguo estado final
+		for (var i = 0; i < this.estados.length; i++) {
+			if(this.estados[i].end){
+				this.estados[i].end = false;
+				//creamos la nueva transicion al estado final
+				t3 = new Transicion(numTransiciones++,'ɛ','ɛ',ef.id);
+				this.estados[i].transiciones.push(t3);
+			}
+		}
+
+		this.estados.push(ei);
+		this.estados.push(ef);
+
+		return this;
+
+	}
+
+	C_Estrella(){
+		var t; //transision nueva
+		var e;
+
+		this.CerraduraPositiva();
+//Obtener id del estado inicial
+		for(var i=0; i<this.estados.length;i++){
+			if(this.estados[i].end)
+				e = this.estados[i].id;
+		}
+
+		//Transicion epsilon del estado final al anicial
+		t	 =  new Transicion(numTransiciones++,'ɛ','ɛ',e);
+
+		//Agregar transicion al estado final
+		for(var i=0; i<this.estados.length; i++){
+			if(this.estados[i].start)
+				this.estados[i].transiciones.push(t);
+		}
+
+		return this;
+
+	}
+
 }
