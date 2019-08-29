@@ -144,8 +144,35 @@ class AFN {
 	}
 
 	Concatenar(afn){
-		
+		var idEnd = this.findEndIndex(); //obtenemos index de estado final del afn local
+		var idInicio = afn.findStartIndex();//obtenemos index de estado inicial del afn a concatenar
+		/*Redidirigimos todas las transiciones del afn que tengan como idSalida el id del estado inicial del afn*/
+		for(var i=0;i<afn.estados.length;i++){ //recorre estados
+			for(var j=0;j<afn.estados[i].length;j++){
+				if(afn.estados[i].transiciones[j].idSalida == idInicio)
+					afn.estados[i].transiciones[j].idSalida = idEnd
+			}
+		}
+		/* Las transiciones contenidas en el estado incial del afn las movemos al estado final del afn local*/
+		for(var i=0;i<afn.estados[idInicio].transiciones.length;i++)
+			this.estados[idEnd].transiciones.push(afn.estados[idInicio].transiciones[i]);
+		//al estado final de afn local lo volvemos estado normal
+		this.estados[idEnd].end = false;
+		//removemos el estado inicial del afn
+		afn.estados.splice(idInicio,1);
+		//agregamos todos los estados de afn a afn local
+		for(var i=0;i<afn.estados.length;i++){
+			this.estados.push(afn.estados[i]);
+		}
+		//actualizamos alfabeto del nuevo AFN
+		for(var i=0;i<afn.alfabeto.length;i++){
+			if(!this.isInAlphabet(afn.alfabeto[i]))
+				this.alfabeto.push(afn.alfabeto[i]);
+		}
+		//retornamos el autamata actualizado
+		return this;
 	}
+
 
 	CerraduraPositiva(){
 
@@ -218,6 +245,29 @@ class AFN {
 
 		return this;
 
+	}
+	/*retorna el index del array de estados en el que se encuentra el estado final*/
+	findEndIndex(){
+		for(var i=0;i<this.estados.length;i++){
+			if(this.estados[i].end)
+				return i;
+		}
+		return -1;
+	}
+	/*retorna el index del array de estados en el que se encuentra el estado inicial*/
+	findStartIndex(){
+		for(var i=0;i<this.estados.length;i++){
+			if(this.estados[i].start)
+				return i;
+		}
+		return -1;
+	}
+	/*retorna true si el simbolo esta en el alfabeto*/
+	isInAlphabet(simbolo){
+		for(var i=0;i<this.alfabeto.length;i++)
+			if(this.alfabeto[i]==simbolo)
+				return true;
+		return false;
 	}
 
 }
