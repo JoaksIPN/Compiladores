@@ -1,12 +1,10 @@
 var automatas = [];
-var numAutomatas = 0;
 $(document).ready(function(){
 	/*EventHandler para boton nuevo automata*/
 	$("#btnCrearNuevo").on("click",function(car){
 		var car = $("#inputSimbolo").val(); //obtenemos valor del input
-		numAutomatas++;//incrementamos el contador de automatas
 		automatas.push(new AFN(car));//agregamos nuevo automata
-		DibujarAFN(automatas[numAutomatas-1]); //dibujamos automata
+		DibujarAFN(automatas[automatas.length-1]); //dibujamos automata
 		$("#basicModal").modal("hide");//escondemos modal
 		$("#inputSimbolo").val("");//reseteamos el valor del input
 	});
