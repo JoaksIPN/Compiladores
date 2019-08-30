@@ -13,20 +13,85 @@
             <div class="row justify-content-around align-items-center">
                 <div class="col-3"><img src="img/ipn.png" class="img-fluid"></div>
                 <div class="col-auto"><h3>Instituto Politecnico Nacional</h3><br><h3>Escuela Superior de Computo</h3></div>
-                <div class="col-auto"></div>
+                <div class="col-2"><img src="img/logoescom.png" class="img-fluid"></div>
             </div>
         </div>
     </header>
-    <div class="container">
-        <div class="row">
-            <div class="col-auto">
-                <input type="" class="form-control" name="">
+    <div class="container mt-5 p-3">
+        <div class="row justify-content-center mb-5"><div class="col text-center"><h1>Generador de automatas AFN/AFD</h1></div></div>
+        <div class="row pl-2 pr-2">
+	        <div class="col-9">
+                <div id="contenedor"></div>
+            </div>
+            <div class="col-3">
+                <div class="row botones">
+                    <div class="col-12"><button id="btnNuevo" data-toggle="modal" data-target="#basicModal" class="btn btn-secondary btn-block">AFN nuevo</button></div>
+                    <div class="col-12"><button id="btnUnion" data-toggle="modal" data-target="#unionModal" class="btn btn-secondary btn-block">Unir</button></div>
+                    <div class="col-12"><button id="btnConcatenar" class="btn btn-secondary btn-block">Concatenar</button></div>
+                    <div class="col-12"><button id="btnCerraduraPositiva" class="btn btn-secondary btn-block">Cerradura positiva</button></div>
+                    <div class="col-12"><button id="btnCerraduraKleene" class="btn btn-secondary btn-block">Cerradura Kleene</button></div>
+                </div>
             </div>
         </div>
     </div>
-	   <div id="contenedor"></div>
+
+
+    <!--Modal crear nuevo automata-->
+    <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="basicModalLabel">Agregar simbolo del automata</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="inputSimbolo">Simbolo:</label>
+                <input type="text" id="inputSimbolo" name="inputSimbolo" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btnCrearNuevo" class="btn btn-success">Crear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Modal unir automatas-->
+    <div class="modal fade" id="unionModal" tabindex="-1" role="dialog" aria-labelledby="unionModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="unionModalLabel">Seleccionar 2 AFN</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Automatas</label>
+                  </div>
+                  <select class="custom-select" id="inputGroupSelect01">
+                    <option selected>1er AFN</option>
+                  </select>
+                  <select class="custom-select" id="inputGroupSelect02" >
+                    <option selected>2do AFN</option>
+                  </select>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="btnUnirNuevo" class="btn btn-success">Unir</button>
+          </div>
+        </div>
+      </div>
+    </div>
 	<script type="text/javascript" src="scripts/jquery.js"></script>
-	<script type="text/javascript" src="script/bootstrap.js"></script>
+    <script type="text/javascript" src="scripts/popper.min.js"></script>
+	<script type="text/javascript" src="scripts/bootstrap.js"></script>
 	<script type="text/javascript" src="scripts/vis.min.js"></script>
     <script type="text/javascript" src="scripts/Transicion.js"></script>
     <script type="text/javascript" src="scripts/Estado.js"></script>
