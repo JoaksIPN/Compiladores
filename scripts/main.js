@@ -1,60 +1,38 @@
-var afn = new AFN('a'); //creamos afn basico
-var afn2 = new AFN('b'); //creamos afn basico
-console.log(afn);
-console.log(afn.Concatenar(afn2));
-DibujarAFN(afn); //dibujamos afn en el grafo
-
-
-function DibujarAFN(afn){
-	try{
-		/*****Recorremos todos los estados************/
-		for(var i=0;i<afn.estados.length;i++){
-			/* por cada estado recorrido se agrega un nodo al grafo */
-			var num = afn.estados[i].id;
-			var name = ""+num;
-			//se le asigna un color dependiendo de que tipo de estado sea
-			if(afn.estados[i].start){//Dibuja estado inicial
-				nodos.add({
-					id:num,
-					label:name,
-					color: '#81F7BE'
-				});
-			} else if(afn.estados[i].end){//dbuja estado final
-				nodos.add({
-					id:num,
-					label:name,
-					color: '#F78181'
-				});
-			} else{ //dibuja otro
-				nodos.add({
-					id:num,
-					label:name
-				});
-			}
-			/* fin de agregacion de nodos*/
+var automatas = [];
+var numAutomatas = 0;
+$(document).ready(function(){
+	/*EventHandler para boton nuevo automata*/
+	$("#btnCrearNuevo").on("click",function(car){
+		var car = $("#inputSimbolo").val(); //obtenemos valor del input
+		numAutomatas++;//incrementamos el contador de automatas
+		automatas.push(new AFN(car));//agregamos nuevo automata
+		DibujarAFN(automatas[numAutomatas-1]); //dibujamos automata
+		$("#basicModal").modal("hide");//escondemos modal
+		$("#inputSimbolo").val("");//reseteamos el valor del input
+	});
+	/*EventHandler para boton mostrar modal para union*/
+	$("#btnUnion").on("click",function(){ //Agrega los automatas creados a las combobox
+		for(var i=0;i<automatas.length;i++){
+			$("#inputGroupSelect01").append("<option value='"+i+"'>Id: "+i+" alfabeto: "+automatas[i].alfabeto+"</option>");
+			$("#inputGroupSelect02").append("<option value='"+i+"'>Id: "+i+" alfabeto: "+automatas[i].alfabeto+"</option>");
 		}
-		/****recorremos todos los estados*******/
-		for(var i=0;i<afn.estados.length;i++){
-			var idFrom = afn.estados[i].id; //id de origen de la transicion
-			var caracteres; //simbolos de la transicion
-			var idTo; //destino de la transicion
-			/*****recorremos transiciones del estado****/
-			for(var j=0;j<afn.estados[i].transiciones.length;j++){
-				/***por cada transicion se agrega un edge al grafo***/
-				//si valorMin y valorMax son los mismos entonces
-				if(afn.estados[i].transiciones[j].valorMax==afn.estados[i].transiciones[j].valorMin)
-					caracteres = afn.estados[i].transiciones[j].valorMax;
-				else{ //si no
-					caracteres = "("+valorMin+",...,"+valorMax+")";
-				}
-				idTo = afn.estados[i].transiciones[j].idSalida;
-				/**Agremos edge al grafo**/
-				aristas.add([
-					{from:idFrom, to:idTo, label:caracteres}
-				]);
-			}
-		}
-	} catch(err){
-		alert(err);
-	}
-}
+	});
+	/*Handler crear union del modal*/
+	$("#btnUnirNuevo").on("click",function(car){
+		var afn = $("#inputGroupSelect01").val();//index de primer afn
+		var afn2 = $("#inputGroupSelect02").val();//index de segundo afn
+		if(afn!=afn2){//si son diferentes index
+			automatas[afn].Union(automatas[afn2]); //obtenemos nuevo automata	
+			/*borramos automatas de la lista*/
+			automatas.splice(afn2,1);
+			//delete afn2;
+			console.log(automatas);
+			DibujarAFNs(automatas);//repintamos los nuevos automatas
+			/*Quitamos opciones de ambos combobox*/
+			$("#inputGroupSelect01").empty().append("<option value=''>1er AFN</option>");
+			$("#inputGroupSelect02").empty().append("<option value=''>2do AFN</option>");
+		}else
+			alert("Selecciona dos automatas diferentes");
+	});
+
+});
