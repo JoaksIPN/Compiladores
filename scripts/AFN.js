@@ -18,8 +18,22 @@ var opciones = {
 	}
 };
 var grafo = new vis.Network(contenedor,datos,opciones);
+//limpia contenedor para repintar despues
+function LimpiarContenedor(){
+	nodos = new vis.DataSet();
+	aristas = new vis.DataSet();
+	datos = {
+		nodes: nodos,
+		edges: aristas
+	};
+	var grafo = new vis.Network(contenedor,datos,opciones);
+}
 
-
+function DibujarAFNs(afns){
+	LimpiarContenedor();
+	for(var i=0;i<afns.length;i++)
+		DibujarAFN(afns[i]);
+}
 
 function DibujarAFN(afn){
 	try{
@@ -91,6 +105,7 @@ class AFN {
 
 	Union(afn){
 		var t1,t2,t3,t4;
+		var result;
 		/*Se genera el nuevo estado inicial*/
 		var e1 = new Estado(numEstados++,true,false);
 		/*Remueve propiedad del actual estado inicial//
