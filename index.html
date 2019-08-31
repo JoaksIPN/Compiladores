@@ -12,7 +12,7 @@
         <div class="container">
             <div class="row justify-content-around align-items-center">
                 <div class="col-3"><img src="img/ipn.png" class="img-fluid"></div>
-                <div class="col-auto"><h3>Instituto Politecnico Nacional</h3><br><h3>Escuela Superior de Computo</h3></div>
+                <div class="col-auto"><h3>Instituto Politecnico Nacional</h3><br><h3>Escuela Superior de Cómputo</h3></div>
                 <div class="col-2"><img src="img/logoescom.png" class="img-fluid"></div>
             </div>
         </div>
@@ -25,69 +25,36 @@
             </div>
             <div class="col-3">
                 <div class="row botones">
-                    <div class="col-12"><button id="btnNuevo" data-toggle="modal" data-target="#basicModal" class="btn btn-secondary btn-block">AFN nuevo</button></div>
-                    <div class="col-12"><button id="btnUnion" data-toggle="modal" data-target="#unionModal" class="btn btn-secondary btn-block">Unir</button></div>
-                    <div class="col-12"><button id="btnConcatenar" class="btn btn-secondary btn-block">Concatenar</button></div>
-                    <div class="col-12"><button id="btnCerraduraPositiva" class="btn btn-secondary btn-block">Cerradura positiva</button></div>
-                    <div class="col-12"><button id="btnCerraduraKleene" class="btn btn-secondary btn-block">Cerradura Kleene</button></div>
+                    <div class="col-12"><button id="btnNuevo" data-toggle="modal" class="btn btn-secondary btn-block">AFN nuevo</button></div>
+                    <div class="col-12"><button id="btnUnion" data-toggle="modal" class="btn btn-secondary btn-block">Unir</button></div>
+                    <div class="col-12"><button id="btnConcatenar" data-toggle="modal" class="btn btn-secondary btn-block">Concatenar</button></div>
+                    <div class="col-12"><button id="btnCerraduraPositiva" data-toggle="modal" class="btn btn-secondary btn-block">Cerradura positiva</button></div>
+                    <div class="col-12"><button id="btnCerraduraKleene" data-toggle="modal" class="btn btn-secondary btn-block">Cerradura Kleene</button></div>
+                    <div class="col-12"><button id="btnBorrar" data-toggle="modal" class="btn btn-danger btn-block">Borrar</button></div>
                 </div>
             </div>
         </div>
     </div>
 
 
-    <!--Modal crear nuevo automata-->
-    <div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModalLabel" aria-hidden="true">
+    <!--Modal template-->
+    <div class="modal fade" id="templateModal" tabindex="-1" role="dialog" aria-labelledby="templateModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="basicModalLabel">Agregar simbolo del automata</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title" id="templateModalLabel">titulo</h5>
+            <button id="cerrarModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-                <label for="inputSimbolo">Simbolo:</label>
-                <input type="text" id="inputSimbolo" name="inputSimbolo" class="form-control">
-            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" id="btnCrearNuevo" class="btn btn-success">Crear</button>
+            <button type="button" id="btnSubmit" class="btn btn-success">nada</button>
           </div>
         </div>
       </div>
-    </div>
-    <!--Modal unir automatas-->
-    <div class="modal fade" id="unionModal" tabindex="-1" role="dialog" aria-labelledby="unionModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="unionModalLabel">Seleccionar 2 AFN</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect01">Automatas</label>
-                  </div>
-                  <select class="custom-select" id="inputGroupSelect01">
-                    <option selected>1er AFN</option>
-                  </select>
-                  <select class="custom-select" id="inputGroupSelect02" >
-                    <option selected>2do AFN</option>
-                  </select>
-                </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="btnUnirNuevo" class="btn btn-success">Unir</button>
-          </div>
-        </div>
-      </div>
+    </div>>
     </div>
 	<script type="text/javascript" src="scripts/jquery.js"></script>
     <script type="text/javascript" src="scripts/popper.min.js"></script>
