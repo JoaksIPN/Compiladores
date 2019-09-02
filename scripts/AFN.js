@@ -4,6 +4,7 @@ var numTransiciones=0;//variable global cuenta transicioens
 var nodos = new vis.DataSet(); //nodos totales
 var aristas = new vis.DataSet(); //aristas totales
 var contenedor = document.getElementById("contenedor"); //contenedor del grafo
+var Epsilon='\x00';
 var datos = {
 	nodes: nodos,
 	edges: aristas
@@ -260,6 +261,49 @@ class AFN {
 
 		return this;
 
+	}
+
+	mover(estado ,caracter ){
+		var conjuntoR= [];
+		estado.transiciones.forEach(element => {
+			if(element==caracter)
+			conjuntoR=conjuntoR.concat.element.idSalida;
+		});
+		return conjuntoR;
+	}
+	mover(conjuntoS, caracter){
+		var conjuntoR= [];
+		conjuntoS.forEach(element => {
+			conjuntoR=conjuntoR.concat.mover(element,caracter);
+		});
+		return conjuntoR;
+	}
+
+	cerradura_e(estado)
+	{
+		var stack_estado=[];
+		var conjuntoC= [];
+		stack_estado.push(estado);
+		while (stack_estado.length!=0) {
+			estado=stack_estado.pop();
+			if (cojuntoC.find(estado)) 
+				continue;
+			conjuntoC.push(estado);
+			estado.transiciones.forEach(element => {
+				if (elment.valorMin=Epsilon) {
+					stack_estado.push(element);
+				}
+				
+			});
+		}
+
+
+
+	}
+
+	ir_a(conjuntoS,caracter){
+		return cerradura_e(mover(conjuntoS,caracter));
+		
 	}
 	/*retorna el index del array de estados en el que se encuentra el estado final*/
 	findEndIndex(){
