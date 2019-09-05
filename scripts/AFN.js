@@ -21,6 +21,7 @@ var opciones = {
 var grafo = new vis.Network(contenedor,datos,opciones);
 
 function UnirTodo(afns){
+	var tokens = 0;
 	//Creamos AFN con caracter cualquiera
 	var nuevoAFN = new AFN('-1');
 	//borramos alfabeto
@@ -50,6 +51,13 @@ function UnirTodo(afns){
 			nuevoAFN.estados[0].transiciones.push(new Transicion(numTransiciones++,'ɛ','ɛ',nuevoAFN.estados[i].id));
 		}
 	}
+	
+	for (var i = 0; i < nuevoAFN.estados.length; i++) {
+		if (nuevoAFN.estados[i].end) {
+			nuevoAFN.estados[i].token = tokens+5;
+			tokens +=5;
+			console.log(nuevoAFN.estados[i].token);
+		}
 	
 	console.log(nuevoAFN);
 	//retornamos nuevo automata
