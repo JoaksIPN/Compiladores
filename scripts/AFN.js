@@ -19,6 +19,45 @@ var opciones = {
 	}
 };
 var grafo = new vis.Network(contenedor,datos,opciones);
+
+function UnirTodo(afns){
+	//Creamos AFN con caracter cualquiera
+	var nuevoAFN = new AFN('-1');
+	//borramos alfabeto
+	nuevoAFN.alfabeto = [];
+	//borramos estados
+	nuevoAFN.estados = [];
+	//Creamos estado inicial
+	var e1 = new Estado(numEstados++,true,false,1);
+	//agregamos estado inicial al nuevoAFN
+	nuevoAFN.estados.push(e1);
+	//por cada afn agregamos cada uno de los estados a un nuevo AFN
+	//ademas vamos creando el nuevo alfabeto evitando repetciones
+	for(var i=0;i<afns.length;i++){
+		for(var j=0;j<afns[i].estados.length;j++){
+			nuevoAFN.estados.push(afns[i].estados[j]);
+		}
+		for(var j=0;j<afns[i].alfabeto.length;j++){
+			if(!nuevoAFN.isInAlphabet(afns[i].alfabeto[j]))
+				nuevoAFN.alfabeto.push(afns[i].alfabeto[j]);
+		}
+	}
+	//Del nuevo afn vamos a crear transiciones desde el primer estado que es "e1" a todos los demas estados
+	//identificados como iniciales ademas les quitaremos dicha propiedad para que solo "e1" sea el inicial
+	for(var i=1/*omitimos posicion cero por es "e1"*/;i<nuevoAFN.estados.length;i++){
+		if(nuevoAFN.estados[i].start){
+			nuevoAFN.estados[i].start = false;
+			nuevoAFN.estados[0].transiciones.push(new Transicion(numTransiciones++,'ɛ','ɛ',nuevoAFN.estados[i].id));
+		}
+	}
+	
+	console.log(nuevoAFN);
+	//retornamos nuevo automata
+	return nuevoAFN;
+}
+
+
+
 //limpia contenedor para repintar despues
 function LimpiarContenedor(){
 	nodos = new vis.DataSet();
