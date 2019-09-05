@@ -29,6 +29,7 @@ $(document).ready(function(){
             +"<option selected>2do AFN</option></select></div></div>";
         claseBoton = "unirAFN";
         generarModal("Unir dos AFN",contenido,"Unir");
+        $("#btnUnirTodo").fadeIn();
         $("#templateModal").modal("show");//mostramos modal
         //Agrega los automatas creados a los combobox
 		for(var i=0;i<automatas.length;i++){
@@ -36,6 +37,20 @@ $(document).ready(function(){
 			$("#inputGroupSelect02").append("<option value='"+i+"'>Id: "+i+" alfabeto: "+automatas[i].alfabeto+"</option>");
 		}
 	});
+
+	//Al dar click a unir todo
+	$("#btnUnirTodo").on("click",function(){
+		console.log("entro");
+		var nuevo = UnirTodo(automatas);
+		automatas = [];
+		automatas.push(nuevo);
+		DibujarAFNs(automatas);
+		$("#btnUnirTodo").fadeOut();
+		$("#templateModal").modal("hide");//escondemos modal
+		$("#btnSubmit").removeClass("unirAFN");
+
+	});
+
 	/*Al dar click en concatenar*/
 	$("#btnConcatenar").on("click",function(){
 		var contenido = "<div class='form-group'><div class='input-group mb-3'>"+
@@ -117,6 +132,7 @@ $(document).ready(function(){
 				$("#inputGroupSelect02").empty().append("<option value=''>2do AFN</option>");
 				$("#templateModal").modal("hide");//escondemos modal
 				$("#btnSubmit").removeClass("unirAFN");
+				$("#btnUnirTodo").fadeOut();
 			}else
 				alert("Selecciona dos automatas diferentes");
 		} else if($("#btnSubmit").hasClass("concatenarAFN")){//concatenar afn
@@ -171,6 +187,7 @@ $(document).ready(function(){
 	$("#cerrarModal").on("click",function(){
 		//se debe quitar la clase agregada al btnSubmit para evitar bugs
 		$("#btnSubmit").removeClass(claseBoton);
+		$("#btnUnirTodo").fadeOut();
 	});
 });
 
