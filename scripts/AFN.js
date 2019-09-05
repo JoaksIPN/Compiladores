@@ -302,7 +302,7 @@ class AFN {
 
 	}
 
-	mover(estado ,caracter ){
+	mover_e(estado ,caracter ){
 		var conjuntoR= [];
 		estado.transiciones.forEach(element => {
 			if(element==caracter)
@@ -313,7 +313,7 @@ class AFN {
 	mover(conjuntoS, caracter){
 		var conjuntoR= [];
 		conjuntoS.forEach(element => {
-			conjuntoR=conjuntoR.concat.mover(element,caracter);
+			conjuntoR=conjuntoR.concat.mover_e(element,caracter);
 		});
 		return conjuntoR;
 	}
