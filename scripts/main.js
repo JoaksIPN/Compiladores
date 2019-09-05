@@ -98,6 +98,13 @@ $(document).ready(function(){
 			$("#inputGroupSelect02").append("<option value='"+i+"'>Id: "+i+" alfabeto: "+automatas[i].alfabeto+"</option>");
 		}
 	});
+	/*Al dar click en generar AFD*/
+	$("#btnAFD").on("click",function(){
+		console.log(automatas[0]);
+		var afd = new AFD('d');
+		var tabla = afd.convertir_AFD(automatas[0]);
+		console.log(tabla);
+	});
 
 	/******************FIN FUNCIONES OPERACIONES AFN*************************/
 
