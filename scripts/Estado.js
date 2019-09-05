@@ -6,6 +6,7 @@ class Estado {
 		this.end = end;
 		this.tocken = tocken;
 		this.transiciones = [];
+		this.token = -1;
 	}
 
 	Imprimir(){
