@@ -310,48 +310,7 @@ class AFN {
 
 	}
 
-	mover_e(estado ,caracter ){
-		var conjuntoR= [];
-		estado.transiciones.forEach(element => {
-			if(element==caracter)
-			conjuntoR=conjuntoR.concat.element.idSalida;
-		});
-		return conjuntoR;
-	}
-	mover(conjuntoS, caracter){
-		var conjuntoR= [];
-		conjuntoS.forEach(element => {
-			conjuntoR=conjuntoR.concat.mover_e(element,caracter);
-		});
-		return conjuntoR;
-	}
-
-	cerradura_e(estado)
-	{
-		var stack_estado=[];
-		var conjuntoC= [];
-		stack_estado.push(estado);
-		while (stack_estado.length!=0) {
-			estado=stack_estado.pop();
-			if (conjuntoC.find(estado)) 
-				continue;
-			conjuntoC.push(estado);
-			estado.transiciones.forEach(element => {
-				if (elment.valorMin=Epsilon) {
-					stack_estado.push(element);
-				}
-				
-			});
-		}
-
-
-
-	}
-
-	ir_a(conjuntoS,caracter){
-		return cerradura_e(mover(conjuntoS,caracter));
-		
-	}
+	
 	/*retorna el index del array de estados en el que se encuentra el estado final*/
 	findEndIndex(){
 		for(var i=0;i<this.estados.length;i++){
@@ -374,6 +333,60 @@ class AFN {
 			if(this.alfabeto[i]==simbolo)
 				return true;
 		return false;
+	}
+	
+	cerradura_e(estado)
+	{
+		var stack_estado=[];
+		var conjuntoC= [];
+		stack_estado.push(estado);
+		while (stack_estado.length!=0) {
+			estado=stack_estado.pop();
+			if (conjuntoC.find(function(element) {
+				element=estado;
+			  }))
+			  continue;
+			conjuntoC.push(estado);
+			estado.transiciones.forEach(element => {
+				if (element.valorMin=='ɛ') {
+					stack_estado.push(element);
+				}
+				
+			});
+		}
+		return conjuntoC;
+       }
+    
+       mover_e(estado ,caracter ){
+		var conjuntoR= [];
+		estado.transiciones.forEach(element => {
+			if(element==caracter)
+			conjuntoR=conjuntoR.concat.element.idSalida;
+		});
+		return conjuntoR;
+	}
+	mover(conjuntoS, caracter){
+		var conjuntoR= [];
+		var conjuntoaux= [];
+		conjuntoS.forEach(element => {
+			conjuntoaux=this.mover_e(element)
+			conjuntoR=conjuntoR.concat.conjuntoaux;
+		});
+		return conjuntoR;
+	}
+
+	
+	ir_a(conjuntoS,caracter){
+		var conjuntoR= [];
+		var conjuntoIR= [];
+		var conjuntoaux= [];
+		conjuntoR=this.mover(conjuntoS,caracter);	
+		if(conjuntoR.length!=0){
+		conjuntoR.forEach(element => {
+			conjuntoaux=this.cerradura_e(element);
+			conjuntoIR=conjuntoIR.concat.conjuntoaux;
+		});}
+		return conjuntoIR;
 	}
 
 }
