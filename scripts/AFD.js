@@ -3,27 +3,19 @@ var numEstados=0;//variable global cuanta estados
 var numAFD = 0;//variable global cuenta afns
 var numTransiciones=0;//variable global cuenta transicioens
 
-class AFD {
-	constructor(car){
-		this.alfabeto = [car];
-		this.estados = [];
-		this.id = numAFD++;
-		this.estados.push(new Estado(numEstados++,true,false));
-		this.estados.push(new Estado(numEstados++,false,true));
-		var t = new Transicion(numTransiciones++,car,car,this.estados[1].id);
-		var ts = [t];
-		this.estados[0].transiciones = ts;
-    }
-    
 
+class AFD {
+	
     search(S,Si){
         if(S.includes(Si))
             return S.indexOf(Si);
         return -1;
     }
+  
     convertir_AFD(AFN){
         var i=0;
         var j=0;
+        var id;
         var index;
         var S=[];
         var auxS=[];
@@ -31,7 +23,17 @@ class AFD {
         var transicion =[];
         var ftransicion =[];
         var queue = new Queue();
-        var S0= AFN.cerradura_e(AFN.estados[0]);
+        var S0=[];
+
+        console.log(AFN);
+
+        id=AFN.findStartIndex();
+        
+
+        S0=AFN.cerradura_e(AFN.estados.find(function(element) {
+            element.id=id;
+         }));
+        
         S.push(S0);
         queue.enqueue(S0);
 
@@ -41,7 +43,7 @@ class AFD {
             AFN.alfabeto.forEach(element => {
                 j=0;
                 transicion.length=0;// Limpiando el arreglo
-                auxSi=AFN.ir_a(aux,element);
+                auxSi=AFN.ir_a(auxS,element);
                 //Si el resultado de IR_A no es vacios
                 if(auxSi.lenght!=0){
                 index=Search(S,auxSi);
