@@ -325,7 +325,7 @@ class AFN {
 		stack_estado.push(estado);
 		while (stack_estado.length!=0) {
 			estado=stack_estado.pop();
-			if (cojuntoC.find(estado)) 
+			if (conjuntoC.find(estado)) 
 				continue;
 			conjuntoC.push(estado);
 			estado.transiciones.forEach(element => {
