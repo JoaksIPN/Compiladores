@@ -335,8 +335,16 @@ class AFN {
 		return false;
 	}
 	
-	cerradura_e(estado)
-	{
+	findEstado(idS){
+		for(var i=0;i<this.estados.length;i++){
+			if(this.estados[i].id==idS)
+				break;
+				
+		}
+		return this.estados[i];
+	}
+
+	cerradura_e(estado){
 		var stack_estado=[];
 		var conjuntoC= [];
 		stack_estado.push(estado);
@@ -348,29 +356,32 @@ class AFN {
 			  continue;
 			conjuntoC.push(estado);
 			estado.transiciones.forEach(element => {
-				if (element.valorMin=='ɛ') {
-					stack_estado.push(element);
+				if (element.valorMin=="ɛ") {
+					stack_estado.push(this.findEstado(element.idSalida));
 				}
-				
 			});
 		}
 		return conjuntoC;
-       }
+    }
     
-       mover_e(estado ,caracter ){
+    	mover_e(estado ,caracter ){
 		var conjuntoR= [];
+		var estadoAux;
 		estado.transiciones.forEach(element => {
-			if(element==caracter)
-			conjuntoR=conjuntoR.concat.element.idSalida;
+			if(element.valorMin==caracter){
+				estadoAux=this.findEstado(element.idSalida);
+				conjuntoR.push(estadoAux);
+			}
 		});
 		return conjuntoR;
 	}
 	mover(conjuntoS, caracter){
 		var conjuntoR= [];
-		var conjuntoaux= [];
+		var conjuntoAux= [];
 		conjuntoS.forEach(element => {
-			conjuntoaux=this.mover_e(element)
-			conjuntoR=conjuntoR.concat.conjuntoaux;
+			conjuntoAux=this.mover_e(element,caracter);
+			if(conjuntoAux.length!=0)
+			conjuntoR=conjuntoR.concat(conjuntoAux);
 		});
 		return conjuntoR;
 	}
@@ -384,7 +395,8 @@ class AFN {
 		if(conjuntoR.length!=0){
 		conjuntoR.forEach(element => {
 			conjuntoaux=this.cerradura_e(element);
-			conjuntoIR=conjuntoIR.concat.conjuntoaux;
+			if(conjuntoaux.length!=0)
+			conjuntoIR=conjuntoIR.concat(conjuntoaux);
 		});}
 		return conjuntoIR;
 	}
