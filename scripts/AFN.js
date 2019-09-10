@@ -207,7 +207,8 @@ class AFN {
 		}
 		/* se crea nuevo alfabeto*/
 		for(var i=0;i<afn.alfabeto.length;i++)
-			this.alfabeto.push(afn.alfabeto[i]);
+			if(!this.isInAlphabet(afn.alfabeto[i]))
+				this.alfabeto.push(afn.alfabeto[i]);
 		/*Se agregan estados del afn y los dos nuevos estados al array del afn local*/
 		for(var i=0;i<afn.estados.length;i++)
 			this.estados.push(afn.estados[i]);
