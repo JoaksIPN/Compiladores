@@ -10,9 +10,16 @@ $(document).ready(function(){
 	/*Al dar click en nuevo AFN*/
 	$("#btnNuevo").on("click",function(){ //Agrega los automatas creados a las combobox
 		/*codigo html que se mostrara como cuerpo del modal*/
-		var contenido = "<div class='form-group'><label for='inputSimbolo'>"
-			+"Simbolo:</label><input type='text' id='inputSimbolo' name='inputSimbolo'"
-			+" class='form-control'></div>";
+		var contenido = "<div class='custom-control custom-radio custom-control-inline'>"
+			+"<input type='radio' id='inputRadio1' name='inputRadio' class='custom-control-input'><label class='custom-control-label' "
+			+"for='inputRadio1'>Un simbolo</label></div><div class='custom-control custom-radio custom-control-inline'>"
+			+"<input type='radio' id='inputRadio2' name='inputRadio' class='custom-control-input'><label class='custom-control-label' "
+			+"for='inputRadio2'>Conjunto de simbolos</label></div>"
+			+"<div class='input-group mt-3'><div class='input-group-prepend'>"
+			+"<span class='input-group-text'>Valor minimo:</span></div>"
+			+"<input type='text' class='form-control' id='inputValorMin'><div class='input-group-prepend'>"
+			+"<span class='input-group-text'>Valor maximo:</span></div>"
+			+"<input type='text' class='form-control' id='inputValorMax'></div>";
 		claseBoton = "nuevoAFN";
 		generarModal("Crear nuevo AFN",contenido,"Crear");//funcion para generar modal
 		$("#templateModal").modal("show");//mostramos modal
@@ -118,8 +125,13 @@ $(document).ready(function(){
 		//al dar click en el boton se determinara cual es la clase que tiene y sabiendo esto
 		//se ejecutaran las instrucciones correspondientes
 		if($("#btnSubmit").hasClass("nuevoAFN")){//crea nuevo afn
-			var car = $("#inputSimbolo").val(); //obtenemos valor del input
-			automatas.push(new AFN(car));//agregamos nuevo automata
+			var min = $("#inputValorMin").val(); //obtenemos valor min del input
+			var max = $("#inputValorMax").val();
+			if(min==max){ //en caso de que se registre un solo simbolo
+				automatas.push(new AFN(min));//se genera con alfabeto de un simbolo
+			} else {
+				automatas.push(new AFN(min+"-"+max));//se genera con alfabeto de un rango
+			}
 			DibujarAFN(automatas[automatas.length-1]); //dibujamos automata
 			$("#templateModal").modal("hide");//escondemos modal
 			$("#inputSimbolo").val("");//reseteamos el valor del input

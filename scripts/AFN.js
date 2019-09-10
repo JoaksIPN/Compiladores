@@ -57,7 +57,7 @@ function UnirTodo(afns){
 			tokens +=5;
 			console.log(nuevoAFN.estados[i].token);
 		}
-	
+	}
 	console.log(nuevoAFN);
 	//retornamos nuevo automata
 	return nuevoAFN;
@@ -120,7 +120,7 @@ function DibujarAFN(afn){
 				if(afn.estados[i].transiciones[j].valorMax==afn.estados[i].transiciones[j].valorMin)
 					caracteres = afn.estados[i].transiciones[j].valorMax;
 				else{ //si no
-					caracteres = "("+valorMin+",...,"+valorMax+")";
+					caracteres = "("+afn.estados[i].transiciones[j].valorMin+"-"+afn.estados[i].transiciones[j].valorMax+")";
 				}
 				idTo = afn.estados[i].transiciones[j].idSalida;
 				/**Agremos edge al grafo**/
@@ -137,13 +137,26 @@ function DibujarAFN(afn){
 
 class AFN {
 	constructor(car){
-		this.alfabeto = [car];
+		/*Obtenemos valor max y valor min del string car*/
+		var valores = car.split("-");
+		var aux;
+		if(valores.length>1){
+			if(valores[0]>valores[1]){/*Verificamos que en la posicion 0 este el menos y en la 1 el mayor*/
+				aux = valores[0];
+				valores[0] = valores[1];
+				valores[1] = aux;
+			}
+			this.alfabeto = [(valores[0]+"-"+valores[1])];
+		}else{
+			valores[1] = valores[0];
+			this.alfabeto = [valores[0]];
+		}
+		
 		this.estados = [];
 		this.id = numAFN++;
-
 		this.estados.push(new Estado(numEstados++,true,false));
 		this.estados.push(new Estado(numEstados++,false,true));
-		var t = new Transicion(numTransiciones++,car,car,this.estados[1].id);
+		var t = new Transicion(numTransiciones++,valores[0],valores[1],this.estados[1].id);
 		var ts = [t];
 		this.estados[0].transiciones = ts;
 	}
