@@ -306,6 +306,44 @@ class AFN {
 		return this;
 
 	}
+	
+	Opcional(){
+		var t1, t2, t3;
+		var id_start, id_end;
+		var new_start, new_end;
+		//Encontrar el estado inicial y quitarle que sea inicial cx
+		for (var i = 0; i < this.estados.length; i++) {
+			if (this.estados[i].start){
+				id_start = this.estados[i].id;
+				this.estados[i].start=false;
+			}
+		}
+		//Creamos la una nueva transicion
+		t1 = new Transicion(numTransiciones++,'ɛ','ɛ',id_start);
+		//Creamos el nuevo estado inicial
+		new_start = new Estado(numEstados++,true,false);
+		new_start.transiciones.push(t1);
+
+		//Creamos el nuevo estado finales
+		new_end = new Estado(numEstados++,false,true);
+		id_end = new_end.id;
+		//Creamos la nueva transicion para el estado finales
+		t2 = new Transicion(numTransiciones,'ɛ','ɛ',id_end);
+
+		for (var i = 0; i < this.estados.length; i++) {
+			if (this.estados[i].end){
+				this.estados[i].transiciones.push(t2);
+				this.estados[i].end = false;
+			}
+		}
+		//Crear la transicion que va del estado inicual al final
+		t3 = new Transicion(numTransiciones++,'ɛ','ɛ',id_end);
+		new_start.transiciones.push(t3);
+		this.estados.push(new_start);
+		this.estados.push(new_end);
+
+		return this;
+	}
 
 	move_e(estado ,caracter ){
 		var conjuntoR= [];
