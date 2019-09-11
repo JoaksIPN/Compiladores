@@ -420,7 +420,7 @@ class AFN {
 	}
 	findEstado(idS){
 		for(var i=0;i<this.estados.length;i++){
-			if(this.estados[i].id=idS)
+			if(this.estados[i].id==idS)
 				break;
 				
 		}
