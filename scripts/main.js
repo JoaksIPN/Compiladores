@@ -112,7 +112,21 @@ $(document).ready(function(){
 		var tabla = afd.convertir_AFD(automatas[0]);
 		console.log(tabla);
 	});
-
+	/*Al dar click en opcional*/
+	$("#btnOpcional").on("click",function(){
+		var contenido = "<div class='form-group'><div class='input-group mb-3'>"+
+            "<div class='input-group-prepend'><label class='input-group-text' "
+            +"for='inputGroupSelect01'>Automatas</label></div>"
+            +"<select class='custom-select' id='inputGroupSelect01'><option selected>"
+            +"1er AFN</option></select></div></div>";
+        claseBoton = "opcionalAFN";
+        generarModal("Operacion opcional",contenido,"Crear");
+        $("#templateModal").modal("show");
+        for(var i=0;i<automatas.length;i++){
+			$("#inputGroupSelect01").append("<option value='"+i+"'>Id: "+i+" alfabeto: "+automatas[i].alfabeto+"</option>");
+			$("#inputGroupSelect02").append("<option value='"+i+"'>Id: "+i+" alfabeto: "+automatas[i].alfabeto+"</option>");
+		}
+	});
 	/******************FIN FUNCIONES OPERACIONES AFN*************************/
 
 	/**********Funciones para generar AFNs ********************************/
@@ -190,6 +204,15 @@ $(document).ready(function(){
 			$("#inputGroupSelect01").empty().append("<option value=''>1er AFN</option>");$("#inputGroupSelect02").empty().append("<option value=''>2do AFN</option>");
 			$("#templateModal").modal("hide");//escondemos modal
 			$("#btnSubmit").removeClass("kleeneAFN");
+		} else if($("#btnSubmit").hasClass("opcionalAFN")){
+			var afn = $("#inputGroupSelect01").val();
+			automatas[afn].Opcional();
+			console.log(automatas);
+			DibujarAFNs(automatas);
+			/*Quitamos opciones del combobox*/
+			$("#inputGroupSelect01").empty().append("<option value=''>1er AFN</option>");$("#inputGroupSelect02").empty().append("<option value=''>2do AFN</option>");
+			$("#templateModal").modal("hide");//escondemos modal
+			$("#btnSubmit").removeClass("opcionalAFN");
 		}
 	});
 	/******FIN CONTROL DE BOTON DEL MODAL********************/
