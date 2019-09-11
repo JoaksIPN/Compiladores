@@ -359,40 +359,64 @@ class AFN {
 		return this;
 	}
 
-	move_e(estado ,caracter ){
-		var conjuntoR= [];
+	
+	cerradura_e(estado){
+		var stack_estado=[];
+		var conjuntoC=[];
+		var s;
+		stack_estado.push(estado);
+		while (stack_estado.length!=0) {
+			estado=stack_estado.pop();
+			if (conjuntoC.find(function(element) {
+				element=estado;
+			  }))
+			  continue;
+			conjuntoC.push(estado);
+			estado.transiciones.forEach(element => {
+				for(s=element.valorMin;s<=element.valorMin;s++){
+				if (s=="ɛ") {
+					stack_estado.push(this.findEstado(element.idSalida));
+				}}
+			});
+		}
+		return conjuntoC;
+    }
+    
+    mover_e(estado ,caracter ){
+		var conjuntoR=[];
+		var estadoAux;
 		estado.transiciones.forEach(element => {
-			if(element==caracter)
-			conjuntoR=conjuntoR.concat.element.idSalida;
+			if(caracter >=element.valorMin  && caracter<=element.valorMax){
+				estadoAux=this.findEstado(element.idSalida);
+				conjuntoR.push(estadoAux);
+			}
 		});
 		return conjuntoR;
 	}
 	mover(conjuntoS, caracter){
 		var conjuntoR= [];
+		var conjuntoAux= [];
 		conjuntoS.forEach(element => {
-			conjuntoR=conjuntoR.concat.mover_e(element,caracter);
+			conjuntoAux=this.mover_e(element,caracter);
+			if(conjuntoAux.length!=0)
+			conjuntoR=conjuntoR.concat(conjuntoAux);
 		});
 		return conjuntoR;
 	}
 
-	cerradura_e(estado)
-	{
-		var stack_estado=[];
-		var conjuntoC= [];
-		stack_estado.push(estado);
-		while (stack_estado.length!=0) {
-			estado=stack_estado.pop();
-			if (cojuntoC.find(estado)) 
-				continue;
-			conjuntoC.push(estado);
-			estado.transiciones.forEach(element => {
-				if (elment.valorMin='ɛ') {
-					stack_estado.push(findEstado(elment.idSalida));
-				}
-			});
-		}
-		return conjuntoC;
-		
+	
+	ir_a(conjuntoS,caracter){
+		var conjuntoR= [];
+		var conjuntoIR= [];
+		var conjuntoaux= [];
+		conjuntoR=this.mover(conjuntoS,caracter);	
+		if(conjuntoR.length!=0){
+		conjuntoR.forEach(element => {
+			conjuntoaux=this.cerradura_e(element);
+			if(conjuntoaux.length!=0)
+			conjuntoIR=conjuntoIR.concat(conjuntoaux);
+		});}
+		return conjuntoIR;
 	}
 	findEstado(idS){
 		for(var i=0;i<this.estados.length;i++){
@@ -403,10 +427,7 @@ class AFN {
 		return this.estados[i];
 	}
 
-	ir_a(conjuntoS,caracter){
-		return cerradura_e(mover(conjuntoS,caracter));
-		
-	}
+	
 	/*retorna el index del array de estados en el que se encuentra el estado final*/
 	findEndIndex(){
 		for(var i=0;i<this.estados.length;i++){
