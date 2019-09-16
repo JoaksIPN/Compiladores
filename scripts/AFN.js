@@ -427,6 +427,17 @@ class AFN {
 		return this.estados[i];
 	}
 
+	searchFinal(){
+		var conjuntoF= [];
+		for(var i=0;i<this.estados.length;i++){
+			if(this.estados[i].end)
+				conjuntoF.push(this.estados[i].id);
+		}
+		console.log(conjuntoF.sort());
+		return conjuntoF;
+		
+	}
+
 	
 	/*retorna el index del array de estados en el que se encuentra el estado final*/
 	findEndIndex(){
