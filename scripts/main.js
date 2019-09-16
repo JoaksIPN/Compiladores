@@ -13,8 +13,8 @@ $(document).ready(function(){
 		}
 		var final = GenerarAutomata(pila);
 		console.log(final);
-		if(final!= -1)
-			DibujarAFN(final);
+		automatas.push(final);
+		DibujarAFNs(automatas);
 	});
 
 	/*Funciones que se mandan a llamar cuando se da click a una operacion AFN
@@ -277,7 +277,7 @@ $(document).ready(function(){
 					afns.push(res);
 					break;
 				case '|':
-				case '-':
+				case '&':
 					console.log("operacion dos: "+car);
 					oper.push(car);
 					break;
@@ -340,7 +340,7 @@ $(document).ready(function(){
 
 	function operacionDosAFNs(op,afn1,afn2){
 		switch(op){
-			case '-':
+			case '&':
 				return afn1.Concatenar(afn2);
 			case '|':
 				return afn1.Union(afn2);
