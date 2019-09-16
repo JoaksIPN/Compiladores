@@ -2,6 +2,21 @@ var automatas = []; //array de automatas creados
 var claseBoton; //variable que contiene el nombre de la clase agreada al boton del modal
 $(document).ready(function(){
 
+	/*Funcion que se manda a llamar para geerar el automata*/
+	$("#btnGenerarAutomata").on("click",function(){
+		var pila = []; //pila donde se guardaran los simbolos de la expresion regular
+		var er = $("#inputRegla").val(); //expresion regular
+		/*LLenamos la pila*/
+		console.log(er);
+		for(var i=er.length-1;i>=0;i--){
+			pila.push(er.charAt(i));
+		}
+		var final = GenerarAutomata(pila);
+		console.log(final);
+		if(final!= -1)
+			DibujarAFN(final);
+	});
+
 	/*Funciones que se mandan a llamar cuando se da click a una operacion AFN
 	*Descripcion: en el html hay una plantilla de modal con el id templateModal, con 
 	*con las siguientes funciones se modificara el contenido de la plantilla dependiendp
@@ -231,6 +246,123 @@ $(document).ready(function(){
 		$("#btnSubmit").removeClass(claseBoton);
 		$("#btnUnirTodo").fadeOut();
 	});
+
+	/*Multiplexor que evalua que operacion del AFN se va a realizar respecto al caracter del parametro*/
+	function GenerarAutomata(pila){
+		var par = [] //pila para el control de parentecis;
+		var afns = [] //pila para el control de afns;
+		var oper = [] //pila para el control de operaciones;
+		var car;
+		var afn1,afn2,op,res,min,max;
+		while(pila.length>0){
+			car = pila.pop();
+			switch(car){
+				case '(':
+					console.log("Parentecis abierto");
+					par.push(car);
+					break;
+				case ')':
+					console.log("Cerrar parentecis");
+					if(par.length==0)
+						return -1;
+					par.pop();
+					op = oper.pop();
+					afn2 = afns.pop();
+					afn1 = afns.pop();
+					res = operacionDosAFNs(op,afn1,afn2);
+					if(res== -1){
+						alert("Error en operacion dos");
+						return -1;
+					}
+					afns.push(res);
+					break;
+				case '|':
+				case '-':
+					console.log("operacion dos: "+car);
+					oper.push(car);
+					break;
+				case '?':
+				case '+':
+				case '*':
+					console.log("operacion uno: "+car);
+					afn1 = afns.pop();
+					res = operacionUnAFN(car,afn1);
+					if(res== -1){
+						alert("Error en operacion uno");
+						return -1;
+					}
+					afns.push(res);
+					break;
+				default:
+					console.log("nuevo simbolo: "+car);
+					if(car!='[')
+						afns.push(new AFN(car));
+					else{
+						min = pila.pop(); //obtenemos min
+						pila.pop(); //quitamos coma (,)
+						max = pila.pop(); //obtenemos max
+						console.log("min: "+min+" max: "+max);
+						pila.pop(); //quitamos "]"
+						if(min>max)
+							afns.push(new AFN(max+"-"+min));
+						else
+							afns.push(new AFN(min+"-"+max));
+					}
+			}
+		}
+		//despues de vaciar la pila verificamos si no hay operaciones pendientes
+		if(oper.length>0){
+			/*en caso de que si, verificamos si aun hay dos afns en la pila*/
+			if(afns.length>=2){
+				/*en caso de que si, ahora si se hacer la operacion*/
+				op = oper.pop();
+				afn2 = afns.pop();
+				afn1 = afns.pop();
+				console.log("operacion final: "+op);
+				res = operacionDosAFNs(op,afn1,afn2);
+				if(res== -1){
+					alert("Error en operacion dos");
+					return -1;
+				}
+				afns.push(res);
+			}
+			else
+				alert("Error");
+		}
+		/*verificamos si al final del proceso solo queda un afn en la cola de afns*/
+		if(afns.length==1)
+			return afns.pop();
+		else{
+			alert("Error quedaron mas de 1 afns al final");
+			return -1;
+		}
+	}
+
+	function operacionDosAFNs(op,afn1,afn2){
+		switch(op){
+			case '-':
+				return afn1.Concatenar(afn2);
+			case '|':
+				return afn1.Union(afn2);
+			default:
+				return -1;
+		}
+	}
+
+	function operacionUnAFN(op,afn){
+		console.log(afn);
+		console.log(op);
+		switch(op){
+			case '*':
+				return afn.C_Estrella();
+			case '+':
+				return afn.CerraduraPositiva();
+			case '?':
+				return afn.Opcional();
+			default:
+				return -1;
+		}
+	}
 });
 
 
