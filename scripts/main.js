@@ -293,8 +293,26 @@ $(document).ready(function(){
 					}
 					afns.push(res);
 					break;
+				case '[':
+					min = pila.pop(); //obtenemos min
+					pila.pop(); //quitamos coma (,)
+					max = pila.pop(); //obtenemos max
+					console.log("min: "+min+" max: "+max);
+					pila.pop(); //quitamos "]"
+					if(min>max)
+						afns.push(new AFN(max+"-"+min));
+					else
+						afns.push(new AFN(min+"-"+max));
+					break;
+				case '/':
+					console.log("entro: "+car);
+					var car2 = pila.pop();
+					console.log("Caracter especial: "+car2);
+					afns.push(new AFN(car2));
+					break;
 				default:
-					console.log("nuevo simbolo: "+car);
+					afns.push(new AFN(car));
+					/*console.log("nuevo simbolo: "+car);
 					if(car!='[')
 						afns.push(new AFN(car));
 					else{
@@ -307,7 +325,7 @@ $(document).ready(function(){
 							afns.push(new AFN(max+"-"+min));
 						else
 							afns.push(new AFN(min+"-"+max));
-					}
+					}*/
 			}
 		}
 		//despues de vaciar la pila verificamos si no hay operaciones pendientes
