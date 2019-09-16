@@ -138,7 +138,7 @@ function DibujarAFN(afn){
 class AFN {
 	constructor(car){
 		/*Obtenemos valor max y valor min del string car*/
-		var valores = car.split("-");
+		var valores = car.split(",");
 		var aux;
 		if(valores.length>1){
 			if(valores[0]>valores[1]){/*Verificamos que en la posicion 0 este el menos y en la 1 el mayor*/
@@ -146,7 +146,7 @@ class AFN {
 				valores[0] = valores[1];
 				valores[1] = aux;
 			}
-			this.alfabeto = [(valores[0]+"-"+valores[1])];
+			this.alfabeto = [(valores[0]+","+valores[1])];
 		}else{
 			valores[1] = valores[0];
 			this.alfabeto = [valores[0]];
