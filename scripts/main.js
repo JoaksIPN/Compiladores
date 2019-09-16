@@ -311,7 +311,7 @@ $(document).ready(function(){
 			}
 		}
 		//despues de vaciar la pila verificamos si no hay operaciones pendientes
-		if(oper.length>0){
+		while(oper.length>0){
 			/*en caso de que si, verificamos si aun hay dos afns en la pila*/
 			if(afns.length>=2){
 				/*en caso de que si, ahora si se hacer la operacion*/
