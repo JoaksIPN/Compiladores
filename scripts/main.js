@@ -126,6 +126,8 @@ $(document).ready(function(){
 		var afd = new AFD('d');
 		var tabla = afd.convertir_AFD(automatas[0]);
 		console.log(tabla);
+		MostrarTablaAFD(tabla);
+		$("#modalTablaAFD").modal("show");
 	});
 	/*Al dar click en opcional*/
 	$("#btnOpcional").on("click",function(){
@@ -245,6 +247,10 @@ $(document).ready(function(){
 		//se debe quitar la clase agregada al btnSubmit para evitar bugs
 		$("#btnSubmit").removeClass(claseBoton);
 		$("#btnUnirTodo").fadeOut();
+	});
+	$("#cerrarModalAFD").on("click",function(){
+		$("#tablaAFD thead").empty();
+		$("#tablaAFD tbody").empty();
 	});
 
 	/*Multiplexor que evalua que operacion del AFN se va a realizar respecto al caracter del parametro*/
@@ -379,6 +385,26 @@ $(document).ready(function(){
 				return afn.Opcional();
 			default:
 				return -1;
+		}
+	}
+
+	function MostrarTablaAFD(AFD){
+		//generamos xcabezeras;
+		var thead = $("#tablaAFD thead");
+		var tbody = $("#tablaAFD tbody");
+		thead.append("<tr>");
+		thead.append("<th></th>");
+		for(var i=0;i<AFD[0].length;i++)
+			thead.append("<th scope='col'>"+AFD[0][i]+"</th>");
+		thead.append("<th>Tocken</th></tr>");
+		//llenamos la tabla
+		for(var i=1;i<AFD.length;i++){
+			tbody.append("<tr>");
+			tbody.append("<td>"+i+"</td>");
+			for(var j=0;j<AFD[i].length;j++){
+				tbody.append("<td>"+AFD[i][j]+"</td>");
+			}
+			tbody.append("</tr>");
 		}
 	}
 });
