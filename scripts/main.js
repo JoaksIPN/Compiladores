@@ -1,5 +1,6 @@
 var automatas = []; //array de automatas creados
 var claseBoton; //variable que contiene el nombre de la clase agreada al boton del modal
+var tabla;//Tabla del afd
 $(document).ready(function(){
 
 	/*Funcion que se manda a llamar para geerar el automata*/
@@ -17,8 +18,51 @@ $(document).ready(function(){
 		DibujarAFNs(automatas);
 	});
 
+	//Funcion que se manda a llama cuando se presiona EvaluarCadena
+	$("#btnEvaluarCadena").on("click",function() {
+		var cadena = $("#inputCadena").val();
+		var current_state=1;
+		var last_accepting_state=-1;
+		var token = 0;
+		var simbolo_index= -1;
+		var token_place = tabla[1].length-1;
+		var last_cadena=-1;
+		if (cadena.length==0)
+			return 0;
+		while (token < cadena.length) {
+
+			for (var i = 0; i < tabla[0].length; i++) {
+				if (tabla[0][i]==cadena[token])
+					simbolo_index = i;
+			}
+			//ver si hay transicion con el estado actual y el token actual
+
+			if (tabla[current_state][simbolo_index]!=-1) {
+				current_state = tabla[current_state][simbolo_index];
+				token = token + 1;
+				if (tabla[current_state][token_place]!=-1) {
+					last_accepting_state = current_state;
+					last_cadena = token;
+				}
+			}
+			else {
+				if (last_accepting_state == -1) {
+					current_state = 0;
+					break;
+				}
+				else {
+					token = last_cadena;
+					console.log(tabla[last_accepting_state][token_place]);
+					current_state = 1;
+				}
+			}
+		}
+		console.log(tabla[last_accepting_state][token_place]);
+		console.log(cadena);
+	});
+
 	/*Funciones que se mandan a llamar cuando se da click a una operacion AFN
-	*Descripcion: en el html hay una plantilla de modal con el id templateModal, con 
+	*Descripcion: en el html hay una plantilla de modal con el id templateModal, con
 	*con las siguientes funciones se modificara el contenido de la plantilla dependiendp
 	*de la operacion solicitada*/
 
@@ -41,7 +85,7 @@ $(document).ready(function(){
 	});
 
 	/*Al dar click en union*/
-	$("#btnUnion").on("click",function(){ 
+	$("#btnUnion").on("click",function(){
 		//codigo html que se mostrara como cuerpo en el modal
 		var contenido = "<div class='form-group'><div class='input-group mb-3'>"+
             "<div class='input-group-prepend'><label class='input-group-text' "
@@ -124,7 +168,7 @@ $(document).ready(function(){
 	$("#btnAFD").on("click",function(){
 		console.log(automatas[0]);
 		var afd = new AFD('d');
-		var tabla = afd.convertir_AFD(automatas[0]);
+		tabla = afd.convertir_AFD(automatas[0]);
 		console.log(tabla);
 		MostrarTablaAFD(tabla);
 		$("#modalTablaAFD").modal("show");
@@ -147,9 +191,9 @@ $(document).ready(function(){
 	/******************FIN FUNCIONES OPERACIONES AFN*************************/
 
 	/**********Funciones para generar AFNs ********************************/
-	/*Descripcion: al generarse el modal el boton de modal tiene agregada una clase 
+	/*Descripcion: al generarse el modal el boton de modal tiene agregada una clase
 	**Ej. si se clickeo en nuevo AFN el boton del modal tendra una clase nuevoAFN
-	**Dependiendo de la clase agregada es la funcion se que ejecutara 
+	**Dependiendo de la clase agregada es la funcion se que ejecutara
 	*/
 
 	$("#btnSubmit").on("click",function(){
@@ -172,7 +216,7 @@ $(document).ready(function(){
 			var afn = $("#inputGroupSelect01").val();//index de primer afn
 			var afn2 = $("#inputGroupSelect02").val();//index de segundo afn
 			if(afn!=afn2){//si son diferentes index
-				automatas[afn].Union(automatas[afn2]); //obtenemos nuevo automata	
+				automatas[afn].Union(automatas[afn2]); //obtenemos nuevo automata
 				/*borramos automatas de la lista*/
 				automatas.splice(afn2,1);
 				console.log(automatas);
@@ -189,7 +233,7 @@ $(document).ready(function(){
 			var afn = $("#inputGroupSelect01").val();//index de primer afn
 			var afn2 = $("#inputGroupSelect02").val();//index de segundo afn
 			if(afn!=afn2){//si son diferentes index
-				automatas[afn].Concatenar(automatas[afn2]); //obtenemos nuevo automata	
+				automatas[afn].Concatenar(automatas[afn2]); //obtenemos nuevo automata
 				/*borramos automatas de la lista*/
 				automatas.splice(afn2,1);
 				console.log(automatas);
@@ -200,7 +244,7 @@ $(document).ready(function(){
 				$("#templateModal").modal("hide");//escondemos modal
 				$("#btnSubmit").removeClass("concatenarAFN");
 			}else
-				alert("Selecciona dos automatas diferentes");	
+				alert("Selecciona dos automatas diferentes");
 		} else if($("#btnSubmit").hasClass("positivaAFN")){
 			var afn = $("#inputGroupSelect01").val();//id del afn seleccionado
 			automatas[afn].CerraduraPositiva();//se genera cerradura al afn
