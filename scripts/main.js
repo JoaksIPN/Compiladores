@@ -32,8 +32,18 @@ $(document).ready(function(){
 		while (token < cadena.length) {
 
 			for (var i = 0; i < tabla[0].length; i++) {
+				if (tabla[0][i].length>1) {
+					var n	= tabla[0][i].split("-");
+					//console.log(n);
+					if (n[0]<=cadena[token] && cadena[token]<=n[1]) {
+						simbolo_index = i;
+						break;
+					}
+				}
+				else{
 				if (tabla[0][i]==cadena[token])
 					simbolo_index = i;
+				}
 			}
 			//ver si hay transicion con el estado actual y el token actual
 
