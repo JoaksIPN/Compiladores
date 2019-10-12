@@ -6,35 +6,18 @@ $(document).ready(function(){
 	} else {
 	  alert('The File APIs are not fully supported in this browser.');
 	}
-	console.log("Hola desde analizador sintactico");
-	$("#inputGramatica").on("click",function(){
-		readFile();
-	});
-});
-
-function readFile() {
-  	var files = document.getElementById("inputGramatica").files;
-	if(!files.length) {
-		alert("Seleccione un archivo");
-		return;
-	}
-
-	var file = files[0];
-	var reader = new FileReader();
-
-	//checamos si el archivo ya esta listo
-	reader.onloadend = function(evt) {
-		if(evt.target.readyState == FileReader.DONE){
-			contenido = evt.target.result;
+	$("#inputGramatica").on("change",function(){
+		var fr = new FileReader();
+		fr.onload = function() {
+			/*AQUI HACER USO DE LA GRAMATICA*/
+			contenido = this.result;
 			console.log(contenido);
 			crearListas();
 			console.log(reglas);
 		}
-	}
-
-	var blob = file.slice(0,file.size);
-	reader.readAsText(blob);
-}
+		fr.readAsText(this.files[0]);
+	});
+});
 
 function crearListas(){
 	console.log(contenido.length);
