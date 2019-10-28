@@ -76,7 +76,23 @@ class ListaDoble{
 			this.nodoArriba = lista.nodoArriba;
 			for(var i=0;i<lista.nodos.length;i++)
 				this.nodos.push(lista.nodos[i]);
-			nodoArriba.nodoUp = null;
+			this.nodoArriba.nodoUp = null;
+		}
+	}
+
+	insertarAbajo(lista){
+		if(this.nodoArriba == null && this.nodoAbajo == null){
+			this.nodoArriba = lista.nodoArriba;
+			this.nodoAbajo = lista.nodoAbajo;
+			this.nodoInicial = lista.nodoInicial;
+			for(var i=0;i<lista.nodos.length;i++)
+				this.nodos.push(lista.nodos[i]);
+		} else {
+			this.nodoAbajo.nodoDown = lista.nodoInicial;
+			this.nodoAbajo = lista.nodoInicial;
+			this.nodoArriba = lista.nodoArriba;
+			for(var i=0;i<lista.nodos.length;i++)
+				this.nodos.push(lista.nodos[i]);
 		}
 	}
 
@@ -88,6 +104,7 @@ class ListaDoble{
 		this._nodoInicial = nodoInicial;
 		this._nodoArriba = nodoInicial;
 		this._nodoAbajo = nodoInicial;
+		this.nodos = [];
 		this._nodos.push(nodoInicial);
 	}
 
