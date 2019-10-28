@@ -1,6 +1,7 @@
 var automatas = []; //array de automatas creados
 var claseBoton; //variable que contiene el nombre de la clase agreada al boton del modal
 var tabla;//Tabla del afd
+var textoTabla = "a-z&A-Z&0-9&'&-&>&;&|&Ω&$♫2&3&-1&-1&4&-1&5&6&7&8&-1♫-1&-1&9&10&-1&-1&-1&-1&-1&-1&5♫-1&-1&9&10&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&11&-1&-1&-1&-1&-1♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&15♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&20♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&25♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&30♫-1&-1&9&-1&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&10♫";
 $(document).ready(function(){
 
 	/*Funcion que se manda a llamar para geerar el automata*/
@@ -20,56 +21,34 @@ $(document).ready(function(){
 
 	//Funcion que se manda a llama cuando se presiona EvaluarCadena
 	$("#btnEvaluarCadena").on("click",function() {
-		var cadena = $("#inputCadena").val();
-		var current_state=1;
-		var last_accepting_state=-1;
-		var token = 0;
-		var simbolo_index= -1;
-		var token_place = tabla[1].length-1;
-		var last_cadena=-1;
-		if (cadena.length==0)
-			return 0;
-		while (token < cadena.length) {
-
-			for (var i = 0; i < tabla[0].length; i++) {
-				if (tabla[0][i].length>1) {
-					var n	= tabla[0][i].split("-");
-					//console.log(n);
-					if (n[0]<=cadena[token] && cadena[token]<=n[1]) {
-						simbolo_index = i;
-						break;
-					}
-				}
-				else{
-				if (tabla[0][i]==cadena[token])
-					simbolo_index = i;
-				}
-			}
-			//ver si hay transicion con el estado actual y el token actual
-
-			if (tabla[current_state][simbolo_index]!=-1) {
-				current_state = tabla[current_state][simbolo_index];
-				token = token + 1;
-				if (tabla[current_state][token_place]!=-1) {
-					last_accepting_state = current_state;
-					last_cadena = token;
-				}
-			}
-			else {
-				if (last_accepting_state == -1) {
-					current_state = 0;
-					break;
-				}
-				else {
-					token = last_cadena;
-					console.log(tabla[last_accepting_state][token_place]);
-					current_state = 1;
-				}
-			}
-		}
-		console.log(tabla[last_accepting_state][token_place]);
-		console.log(cadena);
+		console.log("Entrando a evaluar cadena");
+		//se crea la tabla haciendo uso del string guardado
+		var rows = [];
+		rows = textoTabla.split('♫');
+		for(var i=0;i<rows.length;i++)
+			rows[i] = rows[i].split('&');
+		console.log(rows);
+		var lexema = EvaluarCadena(rows);
+		console.log(lexema);
 	});
+
+	function download(data, filename, type) {
+	    var file = new Blob([data], {type: type});
+	    if (window.navigator.msSaveOrOpenBlob) // IE10+
+	        window.navigator.msSaveOrOpenBlob(file, filename);
+	    else { // Others
+	        var a = document.createElement("a"),
+	                url = URL.createObjectURL(file);
+	        a.href = url;
+	        a.download = filename;
+	        document.body.appendChild(a);
+	        a.click();
+	        setTimeout(function() {
+	            document.body.removeChild(a);
+	            window.URL.revokeObjectURL(url);
+	        }, 0); 
+	    }
+	}
 
 	/*Funciones que se mandan a llamar cuando se da click a una operacion AFN
 	*Descripcion: en el html hay una plantilla de modal con el id templateModal, con
@@ -181,6 +160,23 @@ $(document).ready(function(){
 		tabla = afd.convertir_AFD(automatas[0]);
 		console.log(tabla);
 		MostrarTablaAFD(tabla);
+		//creamos un string equivalente a tabla donde cada celda se separa por "comas"
+		//y cada fila es un ;
+		var texto = "";
+		for(var i=0;i<tabla.length;i++){
+			for(var j=0;j<tabla[i].length;j++){
+				if(tabla[i][j]==";")
+					tabla[i][j] = "/pc/";
+				if(j+1>=tabla[i].length)
+					texto += tabla[i][j] +"♫";
+				else
+					texto += tabla[i][j] + "&";
+			}
+		}
+		console.log(texto);
+		//bake_cookie("tablaAFD",texto);
+		//guardamos la tabla AFD en un txt
+		download(texto,"tablaAFD.txt","text/plain;charset=utf-8");
 		$("#modalTablaAFD").modal("show");
 	});
 	/*Al dar click en opcional*/
@@ -306,6 +302,59 @@ $(document).ready(function(){
 		$("#tablaAFD thead").empty();
 		$("#tablaAFD tbody").empty();
 	});
+
+	function EvaluarCadena(tablaEstados){
+		var cadena = $("#inputCadena").val();
+		var current_state=1;
+		var last_accepting_state=-1;
+		var token = 0;
+		var simbolo_index= -1;
+		var token_place = tablaEstados[1].length-1;
+		var last_cadena=-1;
+		var lex = [];
+		if (cadena.length==0)
+			return 0;
+		while (token < cadena.length) {
+
+			for (var i = 0; i < tablaEstados[0].length; i++) {
+				if (tablaEstados[0][i].length>1) {
+					var n	= tablaEstados[0][i].split("-");
+					//console.log(n);
+					if (n[0]<=cadena[token] && cadena[token]<=n[1]) {
+						simbolo_index = i;
+						break;
+					}
+				}
+				else{
+				if (tablaEstados[0][i]==cadena[token])
+					simbolo_index = i;
+				}
+			}
+			//ver si hay transicion con el estado actual y el token actual
+
+			if (tablaEstados[current_state][simbolo_index]!=-1) {
+				current_state = tablaEstados[current_state][simbolo_index];
+				token = token + 1;
+				if (tablaEstados[current_state][token_place]!=-1) {
+					last_accepting_state = current_state;
+					last_cadena = token;
+				}
+			}
+			else {
+				if (last_accepting_state == -1) {
+					current_state = 0;
+					break;
+				}
+				else {
+					token = last_cadena;
+					console.log(tablaEstados[last_accepting_state][token_place]);
+					lex.push(tablaEstados[last_accepting_state][token_place]);
+					current_state = 1;
+				}
+			}
+		}
+		return lex;
+	}
 
 	/*Multiplexor que evalua que operacion del AFN se va a realizar respecto al caracter del parametro*/
 	function GenerarAutomata(pila){
@@ -475,4 +524,34 @@ function generarModal(titulo,contenido,textoBoton){
 	$("#templateModal div.modal-body").html(contenido);
 	$("#templateModal button#btnSubmit").text(textoBoton);
 	$("#templateModal button#btnSubmit").addClass(claseBoton);
+}
+
+//creacion de cookies, esto con el objetivo de guardar la tabla AFD para usarla con las reglas gramaticales
+function bake_cookie(name, value) {
+  var cookie = [name, '=', JSON.stringify(value), '; domain=.', window.location.host.toString(), '; path=/;'].join('');
+  document.cookie = cookie;
+}
+
+function read_cookie(name) {
+ var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
+ result && (result = JSON.parse(result[1]));
+ return result;
+}
+
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    }
+    rawFile.send(null);
 }
