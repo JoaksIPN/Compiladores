@@ -8,14 +8,14 @@ function GetMax(arreglo){
 
 class ListaDoble{
 	constructor(){
-		this.nodoInicial = null;
-		this.nodoArriba = null;
-		this.nodoAbajo = null;
+		this.nodoInicial = null;;
+		this.nodoFinalDerecho = null;
+		this.nodoFinalAbajo = null;
 		this.profAbajo = [];
 		this.nodos = [];
 		this.simbolos = [];
 		this.filas = 0;
-		this.profundidadArriba = 0;
+		this.profundidadDerecha = 0;
 		this.profundidadAbajo = 0;
 	}
 
@@ -26,7 +26,7 @@ class ListaDoble{
 		var aux = new Nodo();
 		var aux2 = new Nodo();
 		while(n!=null){
-			n2 = n.nodoUp;
+			n2 = n.nodoDer;
 			while(n2.nodoAbajo!=null){
 				profundidad++;
 				aux2 = n2.nodoAbajo;
@@ -42,7 +42,7 @@ class ListaDoble{
 
 	calcularDatos(){
 		this.filas = 0;
-		var profundidadArr = [];
+		var profundidadDer = [];
 		var profundidad = 1;
 		var n = this.nodoInicial;
 		var n2;
@@ -51,46 +51,46 @@ class ListaDoble{
 		while(n !=null){
 			this.filas++;
 			n2 = n;
-			while(n2.nodoArriba != null){
+			while(n2.nodoDer != null){
 				profundidad++;
-				aux2 = n2.nodoArriba;
+				aux2 = n2.nodoDer;
 				n2 = aux2;
 			}
-			profundidadArr.push(profundidad);
+			profundidadDer.push(profundidad);
 			profundidad = 1;
 			aux = n.nodoAbajo;
 			n = aux;
 		}
-		profundidadArriba = GetMax(profundidadArr);
+		profundidadDerecha = GetMax(profundidadDer);
 	}
 
-	insertarArriba(lista){
-		if(this.nodoArriba == null && this.nodoAbajo == null){
-			this.nodoArriba = lista.nodoArriba;
-			this.nodoAbajo = lista.nodoAbajo;
+	insertarDerecho(lista){
+		if(this.nodoFinalDerecho == null && this.nodoFinalAbajo == null){
+			this.nodoFinalDerecho = lista.nodoFinalDerecho;
+			this.nodoFinalAbajo = lista.nodoFinalAbajo;
 			this.nodoInicial = lista.nodoInicial;
 			for(var i=0;i<lista.nodos.length;i++)
 				this.nodos.push(lista.nodos[i]);
 		} else {
-			this.nodoArriba.nodoUp = lista.nodoInicial;
-			this.nodoArriba = lista.nodoArriba;
+			this.nodoFinalDerecho.nodoDer = lista.nodoInicial;
+			this.nodoFinalDerecho = lista.nodoFinalDerecho;
 			for(var i=0;i<lista.nodos.length;i++)
 				this.nodos.push(lista.nodos[i]);
-			this.nodoArriba.nodoUp = null;
+			this.nodoFinalDerecho.nodoDer = null;
 		}
 	}
 
 	insertarAbajo(lista){
-		if(this.nodoArriba == null && this.nodoAbajo == null){
-			this.nodoArriba = lista.nodoArriba;
-			this.nodoAbajo = lista.nodoAbajo;
+		if(this.nodoFinalDerecho == null && this.nodoFinalAbajo == null){
+			this.nodoFinalDerecho = lista.nodoFinalDerecho;
+			this.nodoFinalAbajo = lista.nodoFinalAbajo;
 			this.nodoInicial = lista.nodoInicial;
 			for(var i=0;i<lista.nodos.length;i++)
 				this.nodos.push(lista.nodos[i]);
 		} else {
-			this.nodoAbajo.nodoDown = lista.nodoInicial;
-			this.nodoAbajo = lista.nodoInicial;
-			this.nodoArriba = lista.nodoArriba;
+			this.nodoFinalAbajo.nodoDown = lista.nodoInicial;
+			this.nodoFinalAbajo = lista.nodoInicial;
+			this.nodoFinalDerecho = lista.nodoFinalDerecho;
 			for(var i=0;i<lista.nodos.length;i++)
 				this.nodos.push(lista.nodos[i]);
 		}
@@ -102,26 +102,22 @@ class ListaDoble{
 
 	set nodoInicial(nodoInicial){
 		this._nodoInicial = nodoInicial;
-		this._nodoArriba = nodoInicial;
-		this._nodoAbajo = nodoInicial;
-		this.nodos = [];
-		this._nodos.push(nodoInicial);
 	}
 
-	get nodoArriba(){
-		return this._nodoArriba;
+	get nodoFinalDerecho(){
+		return this._nodoFinalDerecho;
 	}
 
-	set nodoArriba(nodoArriba){
-		this._nodoArriba = nodoArriba;
+	set nodoFinalDerecho(nodoFinalDerecho){
+		this._nodoFinalDerecho = nodoFinalDerecho;
 	}
 
-	get nodoAbajo(){
-		return this._nodoAbajo;
+	get nodoFinalAbajo(){
+		return this._nodoFinalAbajo;
 	}
 
-	set nodoAbajo(nodoAbajo){
-		this._nodoAbajo = nodoAbajo;
+	set nodoFinalAbajo(nodoFinalAbajo){
+		this._nodoFinalAbajo = nodoFinalAbajo;
 	}
 
 	get profAbajo(){
@@ -170,5 +166,29 @@ class ListaDoble{
 
 	set profAbajo(profAbajo){
 		this._profAbajo = profAbajo;
+	}
+
+	SetNodoInicial(lista,nodo){
+		lista.nodoInicial = nodo;
+		lista.nodoFinalAbajo = nodo;
+		lista.nodoFinalDerecho = nodo;
+		lista.nodos.push(nodo);
+	}
+
+	ImprimirLista(){
+		var nodo = this.nodoInicial;
+		var line = "i:";
+		console.log("Imprimiendo...");
+		while(nodo!=null){
+			line += "["+nodo.simbolo+"|"+nodo.terminal+"]->";
+			var nodo2 = nodo;
+			nodo = nodo.nodoDown;
+			while(nodo2.nodoDer!=null){
+				nodo2 = nodo2.nodoDer;
+				line += "["+nodo2.simbolo+"|"+nodo.terminal+"]->";
+			}
+			console.log(line);
+			line = "|->"
+		}
 	}
 }

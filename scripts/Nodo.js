@@ -1,13 +1,13 @@
 class Nodo {
-	constructor(simbolo = "none",nodoUp = null,nodoDown = null,terminal = null){
+	constructor(simbolo = "none",nodoDer = null,nodoDown = null,terminal = null){
 		this.simbolo = simbolo;
-		this.nodoUp = nodoUp;
+		this.nodoDer = nodoDer;
 		this.nodoDown = nodoDown;
 		this.terminal = terminal;
 	}
 
 	Imprimir(){
-		console.log("Nodo{simbolo: "+this.simbolo+" nodoUp: "+this.nodoUp+" nodoDown: "+nodoDown);
+		console.log("Nodo{simbolo: "+this.simbolo+" nodoUp: "+this.nodoDer+" nodoDown: "+nodoDown);
 	}
 
 	get simbolo(){
@@ -18,12 +18,12 @@ class Nodo {
 		this._simbolo = simbolo;
 	}
 
-	get nodoUp(){
-		return this._nodoUp;
+	get nodoDer(){
+		return this._nodoDer;
 	}
 
-	set nodoUp(nodoUp){
-		this._nodoUp = nodoUp;
+	set nodoDer(nodoDer){
+		this._nodoDer = nodoDer;
 	}
 
 	get nodoDown(){
