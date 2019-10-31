@@ -177,17 +177,31 @@ class ListaDoble{
 
 	ImprimirLista(){
 		var nodo = this.nodoInicial;
+		var nodo2,nodo3,nodo4;
 		var line = "i:";
 		console.log("Imprimiendo...");
 		while(nodo!=null){
 			line += "["+nodo.simbolo+"|"+nodo.terminal+"]->";
-			var nodo2 = nodo;
+			nodo2 = nodo;
 			nodo = nodo.nodoDown;
 			while(nodo2.nodoDer!=null){
 				nodo2 = nodo2.nodoDer;
-				line += "["+nodo2.simbolo+"|"+nodo.terminal+"]->";
+				if(nodo2.nodoDown!=null)
+					nodo3 = nodo2.nodoDown;
+				line += "["+nodo2.simbolo+"|"+nodo2.terminal+"]->";
 			}
 			console.log(line);
+			var line2 = "         ||->"
+			while(nodo3!=null){
+				line2 +=  "["+nodo3.simbolo+"|"+nodo3.terminal+"]->";
+				nodo4 = nodo3;
+				while(nodo4.nodoDer!=null){
+					nodo4 = nodo4.nodoDer;
+					line2+= "["+nodo4.simbolo+"|"+nodo4.terminal+"]->";
+				}
+				nodo3 = nodo3.nodoDown;
+				console.log(line2);
+			}
 			line = "|->"
 		}
 	}
