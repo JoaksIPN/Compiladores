@@ -1,1 +1,1 @@
-A->a$
+S->aABC;A->a|bbD;B->a|Ω;C->b|Ω;D->c|Ω$
