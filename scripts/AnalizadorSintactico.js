@@ -44,16 +44,19 @@ function CreateGrammarList(file){
 		rows[i] = rows[i].split('&');
 	console.log(rows);
 	lex = EvaluarCadena(rows,file+"a");
+	while(contenido.includes("->"))
+		contenido = contenido.replace("->",">");
+	console.log(contenido);
 	console.log("tokens de las gramaticas");
 	console.log(lex);
 	//una vez generados los tokens modificamso file remplazando -> por > para evitar bugs
 	//a la hora de acceder los lexemas equivalentes
-	file.replace("->",">");
 	//inicia decenso recursivo para la creacion de las listas
 	if(G(listaReglas)){
 		var t = lex.shift();
 		console.log("t: "+t);
 		if(t == 30){//30 corresponde al token de $ que representa fin de cadena
+			listaReglas.ImprimirLista();
 			console.log(listaReglas);
 			//return true;
 		}
@@ -67,33 +70,41 @@ function CreateGrammarList(file){
 
 function G(lista){
 	console.log("G");
-	if(!ListaReglas(lista)){
-		console.log("regreso true");
+	if(ListaReglas(lista)){
+		//console.log("regreso true");
 		return true;
 	}
-	console.log("regreso false");
+	//console.log("regreso false");
 	return false;
 }
 
 function ListaReglas(lista){
 	var l2 = new ListaDoble();
-	console.log("lista reglas");
+	//console.log("lista reglas");
 	var t;
 	if(Regla(lista)){
+		//console.log("Regla true desde ListaReglas:");
+		//l2.ImprimirLista();
 		t = lex.shift();
-		console.log("t: "+t);
+		//console.log("t: "+t);
 		if(t==15){/*15 es el tocken del ;*/
 			lexemaActual = contenido[indice];
 			lexemas.push(lexemaActual);
 			tokens.push(t);
+			//console.log(lexemaActual+" es simbolo");
 			indice++;
 			if(ListaReglasP(l2)){
+				//console.log("ListaReglasP true con lista:");
+				//lista.ImprimirLista();
+				//console.log("Lista l2");
+				//l2.ImprimirLista();
 				lista.insertarAbajo(l2);
-				lista.ImprimirLista();
+				//lista.ImprimirLista();
 				return true;
 			}
-		}else{
+		}else if(t==30){
 			lex.unshift(t);
+			return true;
 		}
 	}
 	console.log("regreso false");
@@ -102,142 +113,201 @@ function ListaReglas(lista){
 
 function ListaReglasP(lista){
 	var l2 = new ListaDoble();
-	console.log("ListaReglasP");
+	//console.log("ListaReglasP");
 	var t;
 	if(Regla(lista)){
+		//console.log("Regla true desde ListaReglasP:");
+		//l2.ImprimirLista();
 		t = lex.shift();
-		console.log("t: "+t);
+		//console.log("t: "+t);
 		if(t == 15){/*15 es el tocken del punto y coma*/
 			lexemaActual = contenido[indice];
 			lexemas.push(lexemaActual);
 			tokens.push(t);
+			//console.log(lexemaActual + " es un punto y coma");
 			indice++;
 			if(ListaReglasP(l2)){
+				//console.log("ListaReglasP true desde ListaReglasP:");
+				//l2.ImprimirLista();
 				if(l2.nodoInicial != null){
+					//console.log("insertando l2 a lista");
+					//lista.ImprimirLista();
 					lista.insertarAbajo(l2);
-					lista.ImprimirLista();
+					//console.log("Ya agregado:")
+					//lista.ImprimirLista();
 				}
-				console.log("regreso true");
+				//console.log("regreso true");
 				return true;
 			}
-		}else{
+		}else if(t == 30){
+			//console.log("Encontro fin de cadena");
+			if(l2.nodoInicial!=null){
+				//console.log("insetando l2:");
+				//l2.ImprimirLista();
+				//console.log("a: ");
+				//lista.ImprimirLista();
+				lista.insertarAbajo(l2);
+				//console.log("Resultado:");
+				//lista.ImprimirLista();
+			}
+			//console.log("regreso true t:"+t);
 			lex.unshift(t);
+			return true;
 		}
-		console.log("regreso false t:"+t);
+		//console.log("regreso false t:"+t);
 		return false;
 	}
 	lista = null;
-	console.log("regreso true");
+	//console.log("regreso true");
 	return true;
 }
 
 function Regla(lista){
 	var l2 = new ListaDoble();
-	console.log("Regla");
+	//console.log("Regla");
 	var t;
 	if(LadoIzq(lista)){
+		//console.log("LadoIzq true desde Regla: ");
+		//lista.ImprimirLista();
 		t = lex.shift();
-		console.log("t: "+t);
+		//console.log("t: "+t);
 		lexemaActual = contenido[indice];
 		indice++;
 		if(t == 10){//10 es el tocken para la flecha
 			lexemas.push(lexemaActual);
+			//console.log(lexemaActual + "es una flecha");
 			tokens.push(t);
 			if(ListaLadosDer(l2)){
+				//console.log("ListaLadosDer true desde Regla");
+				//l2.ImprimirLista();
 				if(l2.nodoInicial != null){
-					Console.log("l2");
-					lista.insertarAbajo(l2);
-					lista.ImprimirLista();
+					//console.log("agregando l2");
+					//l2.ImprimirLista();
+					//console.log("a: ");
+					//lista.ImprimirLista();
+					lista.insertarDerecho(l2);
+					//console.log("Resultado:")
+					//lista.ImprimirLista();
 				}
-				console.log("regreso true");
+				//console.log("regreso true");
 				
 				return true;
 			}
 		}
 
 	}
-	console.log("regreso false");
+	//console.log("regreso false");
 	lex.unshift(t);
 	return false;
 }
 
 function ListaLadosDer(lista){
-	console.log("Lista lados derechos");
+	//console.log("Lista lados derechos");
 	var l2 = new ListaDoble();
 	if(LadoDerecho(lista)){
+		//console.log("LadoDerecho true desde ListaLadosDer");
+		//lista.ImprimirLista();
 		if(ListaLadosDerP(l2)){
+			//console.log("ListaLadosDerP true desde ListaLadosDer");
+			//l2.ImprimirLista();
 			if(l2.nodoInicial != null){
+				//console.log("Insertando l2");
+				//l2.ImprimirLista();
+				//console.log("a:");
+				//lista.ImprimirLista();
 				lista.insertarAbajo(l2);
-				lista.ImprimirLista();
+				//lista.ImprimirLista();
 			}
-			console.log("regreso true");
+			//console.log("regreso true");
 			return true;
 		}
 	}
-	console.log("regreso false");
+	//console.log("regreso false");
 	return false;
 }
 
 function ListaLadosDerP(lista){
-	console.log("Lista lados der p");
+	//console.log("Lista lados der p");
 	var l2 = new ListaDoble();
 	var t;
 	t = lex.shift();
-	console.log("t: "+t);
+	//console.log("t: "+t);
 	if(t == 20){//20 es el tocken para el OR |
+		lexemaActual = contenido[indice];
+		lexemas.push(lexemaActual);
+		tokens.push(t);
+		indice++;
+		//console.log(lexemaActual+" es un or");
 		if(LadoDerecho(l2)){
-			lexemaActual = contenido[indice];
-			lexemas.push(lexemaActual);
-			tokens.push(t);
-			indice++;
+			//console.log("LadoDerecho true desde ListaLadosDerP:");
+			//l2.ImprimirLista();
 			if(l2.nodoInicial!=null){
+				//console.log("agregando l2");
+				//l2.ImprimirLista();
+				//console.log("a: ");
+				//lista.ImprimirLista();
 				lista.insertarAbajo(l2);
-				lista.ImprimirLista();
+				//console.log("Resultado");
+				//lista.ImprimirLista();
 			}
 			if(ListaLadosDerP(lista)){
-				console.log("regreso true");
+				//console.log("ListaLadosDerP true desde ListaLadosDerP");
+				//console.log("regreso true");
 				return true;
 			}
 		}
-		console.log("regreso false");
+		//console.log("regreso false");
 		lex.unshift(t);
 		return false;
 	}
 	lex.unshift(t);
-	console.log("regreso true");
+	//console.log("regreso true");
 	return true;
 }
 
 function LadoDerecho(lista){
-	console.log("LadoDerecho");
+	//console.log("LadoDerecho");
 	var t;
 	var simbolos  = [];
 	var l2 = new ListaDoble();
 	var n;
 	t = lex.shift();
-	console.log("t: "+t);
+	//console.log("t: "+t);
 	if(t == 5){
 		lexemaActual = contenido[indice];
+		//console.log(lexemaActual + " es un simbolo");
 		indice++;
 		if(VT.includes(""+lexemaActual)){
+			//console.log(lexemaActual + "es un terminal");
 			n = new Nodo(""+lexemaActual);
 			lexemas.push(lexemaActual);
 			tokens.push(t);
 			SetNodoInicial(lista,n);
+			//console.log("se creo nodo inicial");
 			n.terminal = true;
+			//lista.ImprimirLista();
 		} else if(VN.includes(""+lexemaActual)){
 			n = new Nodo(""+lexemaActual);
 			lexemas.push(lexemaActual);
 			tokens.push(t);
 			SetNodoInicial(lista,n);
 			n.terminal = false;
+			//console.log("Se creo nodo inicial");
+			//lista.ImprimirLista();
 		}
 		if(LadoDerechoP(l2)){
+			//console.log("LadoDerechoP true desde LadoDerecho");
+			//l2.ImprimirLista();
 			if(l2.nodoInicial != null){
+				//console.log("Insertando l2");
+				//l2.ImprimirLista();
+				//console.log("a:");
+				//lista.ImprimirLista();
 				lista.insertarDerecho(l2);
-				lista.ImprimirLista();
+				//console.log("Resultado");
+				//lista.ImprimirLista();
 			}
-			console.log("regreso true");
+			//console.log("regreso true");
 			
 			return true;
 		}
@@ -245,55 +315,76 @@ function LadoDerecho(lista){
 		lexemaActual = contenido[indice];
 		lexemas.push(lexemaActual);
 		tokens.push(t);
+		//console.log(lexemaActual + " es un epsilon");
 		indice++;
 		if(LadoDerechoP(l2)){
+			//console.log("LadoDerechoP true desde LadoDerecho");
+			//console.log("insertando l2");
+			//l2.ImprimirLista();
+			//console.log("a:");
+			//lista.ImprimirLista();
 			lista.insertarDerecho(l2);
-			console.log("regreso true");
-			lista.ImprimirLista();
+			//console.log("Resultado:");
+			//lista.ImprimirLista();
+			//console.log("regreso true");
+			//lista.ImprimirLista();
 			return true;
 		}
 	}
-	console.log("regreso false");
+	//console.log("regreso false");
 	return false;
 }
 
 function LadoDerechoP(lista){
 	var t;
-	console.log("LadoDerechoP");
+	//console.log("LadoDerechoP");
 	var simbolos = [];
 	var l2 = new ListaDoble();
 	var n = new Nodo();
 	t = lex.shift();
-	console.log("t: "+t);
+	//console.log("t: "+t);
 	if(t == 5){//5 es el token para los simbolos
 		lexemaActual = contenido[indice];
+		//console.log(lexemaActual + " es un simbolo");
 		indice++;
 		if(VT.includes(""+lexemaActual)){
+			//console.log(lexemaActual+" es terminal");
 			n = new Nodo(""+lexemaActual);
 			tokens.push(t);
 			lexemas.push(lexemaActual);
 			SetNodoInicial(l2,n);
+			//console.log("se crea nodo inicial");
 			n.terminal = true;
+			//l2.ImprimirLista();
 		}else if(VN.includes(""+lexemaActual)){
+			//console.log(lexemaActual+" es no terminal");
 			n = new Nodo(""+lexemaActual);
 			tokens.push(t);
 			lexemas.push(lexemaActual);
 			SetNodoInicial(l2,n);
 			n.terminal = false;
+			//console.log("Creamos nodo inicial");
+			//l2.ImprimirLista();
 		}
 		if(LadoDerechoP(l2)){
+			//console.log("LadoDerechoP true desde LadoDerechoP");
 			if(l2.nodoInicial != null){
+				//console.log("agregando l2");
+				//l2.ImprimirLista();
+				//console.log("a:");
+				//lista.ImprimirLista();
 				lista.insertarDerecho(l2);
-				lista.ImprimirLista();
+				//console.log("Resultado:");
+				//lista.ImprimirLista();
 			}
-			console.log("regreso true");
+			//console.log("regreso true");
 			return true;
 		}
-		console.log("regreso false");
+		//console.log("regreso false");
 		return false;
 	}
 	lex.unshift(t);
-	console.log("regreso true");
+	//console.log("regreso true");
 	return true;
 }
 
@@ -307,27 +398,30 @@ function SetNodoInicial(lista,nodo){
 function LadoIzq(lista){
 	var t;
 	var n;
-	console.log("LadoIzq");
+	//console.log("LadoIzq");
 	t = lex.shift();
-	console.log("t: "+t);
+	//console.log("t: "+t);
 	if(t == 5){//5 es el token para el simbolo
 		lexemaActual = contenido[indice];
 		lexemas.push(lexemaActual);
 		tokens.push(t);
+		//console.log(lexemaActual+" es un simbolo");
 		n = new Nodo(""+lexemaActual);
 		indice++;
 		SetNodoInicial(lista,n);
-		lista.ImprimirLista();
-		console.log("regreso true");
+		//console.log("se crea nodo inicial");
+		//lista.ImprimirLista();
+		//console.log("regreso true");
 		return true;
 	} else if(t == 25){//25 es el token para epsilon(omega)
 		lexemaActual = contenido[indice];
+		//console.log(lexemaActual+" es un epsilon");
 		tokens.push(t);
 		lex.unshift(t);
-		console.log("regreso true");
+		//console.log("regreso true");
 		return true;
 	}
-	console.log("regreso false");
+	//console.log("regreso false");
 	return false;
 }
 
