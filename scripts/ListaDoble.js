@@ -201,6 +201,7 @@ class ListaDoble{
 				}
 				nodo3 = nodo3.nodoDown;
 				console.log(line2);
+				line2 = "         ||->"
 			}
 			line = "|->"
 		}

@@ -1,1 +1,1 @@
-S->aABC;A->a|bbD;B->a|Ω;C->b|Ω;D->c|Ω$
+S->TE;E->+TE|-TE|Ω;T->FV;V->*FV|/FV|Ω;F->(S)|n$

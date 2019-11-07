@@ -8,17 +8,26 @@ var lex;
 var lexemas = [];
 var tokens = [];
 var lexemaActual;
+var textoTabla;
 $(document).ready(function(){
 	if (window.File && window.FileReader && window.FileList && window.Blob) {
 	  // Great success! All the File APIs are supported.
 	} else {
 	  alert('The File APIs are not fully supported in this browser.');
 	}
+	$("#inputTablaAFD").on("change",function(){
+		var fr = new FileReader();
+		fr.onload = function() {
+			/*AQUI HACER USO DE LA GRAMATICA*/
+			textoTabla = this.result;
+			console.log(textoTabla);
+		}
+		fr.readAsText(this.files[0]);
+	});
 	$("#inputGramatica").on("change",function(){
 		var fr = new FileReader();
 		fr.onload = function() {
 			/*AQUI HACER USO DE LA GRAMATICA*/
-			var tablaSimbolos; //simbolos del archivo en una tabla
 			contenido = this.result;
 			console.log(contenido);
 			CreateGrammarList(contenido);
@@ -28,6 +37,7 @@ $(document).ready(function(){
 });
 
 function CreateGrammarList(file){
+	console.log(textoTabla);
 	listaReglas = new ListaDoble();
 	contador = 0;
 	indice = 0;
@@ -49,6 +59,7 @@ function CreateGrammarList(file){
 	console.log(contenido);
 	console.log("tokens de las gramaticas");
 	console.log(lex);
+	console.log(listaReglas);
 	//una vez generados los tokens modificamso file remplazando -> por > para evitar bugs
 	//a la hora de acceder los lexemas equivalentes
 	//inicia decenso recursivo para la creacion de las listas
@@ -95,11 +106,11 @@ function ListaReglas(lista){
 			indice++;
 			if(ListaReglasP(l2)){
 				//console.log("ListaReglasP true con lista:");
-				//lista.ImprimirLista();
+				////lista.ImprimirLista();
 				//console.log("Lista l2");
 				//l2.ImprimirLista();
 				lista.insertarAbajo(l2);
-				//lista.ImprimirLista();
+				////lista.ImprimirLista();
 				return true;
 			}
 		}else if(t==30){
@@ -131,7 +142,7 @@ function ListaReglasP(lista){
 				//l2.ImprimirLista();
 				if(l2.nodoInicial != null){
 					//console.log("insertando l2 a lista");
-					//lista.ImprimirLista();
+					////lista.ImprimirLista();
 					lista.insertarAbajo(l2);
 					//console.log("Ya agregado:")
 					//lista.ImprimirLista();
@@ -313,21 +324,27 @@ function LadoDerecho(lista){
 		}
 	} else if (t == 25){//25 es el token para epsilon(omega)
 		lexemaActual = contenido[indice];
+		indice++;
+		n = new Nodo(""+lexemaActual);
 		lexemas.push(lexemaActual);
 		tokens.push(t);
+		SetNodoInicial(lista,n);
+		n.terminal = true;
 		//console.log(lexemaActual + " es un epsilon");
-		indice++;
 		if(LadoDerechoP(l2)){
 			//console.log("LadoDerechoP true desde LadoDerecho");
-			//console.log("insertando l2");
 			//l2.ImprimirLista();
-			//console.log("a:");
-			//lista.ImprimirLista();
-			lista.insertarDerecho(l2);
-			//console.log("Resultado:");
-			//lista.ImprimirLista();
+			if(l2.nodoInicial != null){
+				//console.log("Insertando l2");
+				//l2.ImprimirLista();
+				//console.log("a:");
+				//lista.ImprimirLista();
+				lista.insertarDerecho(l2);
+				//console.log("Resultado");
+				//lista.ImprimirLista();
+			}
 			//console.log("regreso true");
-			//lista.ImprimirLista();
+			
 			return true;
 		}
 	}
@@ -382,6 +399,28 @@ function LadoDerechoP(lista){
 		}
 		//console.log("regreso false");
 		return false;
+	}else if(t == 25){
+		lexemaActual = contenido[indice];
+		indice++;
+		n = new Nodo(""+lexemaActual);
+		lexemas.push(lexemaActual);
+		tokens.push(t);
+		SetNodoInicial(lista,n);
+		n.terminal = true;
+		if(LadoDerechoP(l2)){
+			//console.log("LadoDerechoP true desde LadoDerechoP");
+			if(l2.nodoInicial != null){
+				//console.log("agregando l2");
+				//l2.ImprimirLista();
+				//console.log("a:");
+				//lista.ImprimirLista();
+				lista.insertarDerecho(l2);
+				//console.log("Resultado:");
+				//lista.ImprimirLista();
+			}
+			//console.log("regreso true");
+			return true;
+		}
 	}
 	lex.unshift(t);
 	//console.log("regreso true");
@@ -438,20 +477,24 @@ function GetTerminales(file){
 		//hacemos un array de reglas separadas por ;
 		var reglas  = file.split(';');
 		var aux;//substring despues de la flecha
-		var index;//posicion donde termina la flecha
+		var loc;
 		for(var i =0;i<reglas.length;i++){
 			for(var j =0;j<reglas[i].length;j++){
 				//buscamos el final del simbolo flecha
 				if(reglas[i][j] == '-' && reglas[i][j+1] == '>'){
 					aux = reglas[i].substring(j+2,reglas[i].length);
-					//remplamzamos los no terminlaes por una coma
+					//remplamzamos los no terminales por una coma
 					for(var k=0;k<VN.length;k++){
-						aux = aux.replace(VN[k],",");
+						loc = aux.indexOf(VN[k]);
+						while(loc>=0){
+							aux = aux.replace(VN[k],",");
+							loc = aux.indexOf(VN[k]);
+						}
 					}
 					//cada caracter que no sean las comas ni el | sera un terminal
 					//si existe un caso especial "num" ese subscring sera un terminal
 					//primero buscamos el num
-					var loc = aux.indexOf("num")
+					loc = aux.indexOf("num")
 					if(loc>=0){
 						//si lo encuentra lo quitamos de aux y agreamosa  VT
 						VT.push("num");

@@ -1,7 +1,7 @@
 var automatas = []; //array de automatas creados
 var claseBoton; //variable que contiene el nombre de la clase agreada al boton del modal
 var tabla;//Tabla del afd
-var textoTabla = "a-z&A-Z&0-9&'&-&>&;&|&Ω&$♫2&3&-1&-1&4&-1&5&6&7&8&-1♫-1&-1&9&10&-1&-1&-1&-1&-1&-1&5♫-1&-1&9&10&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&11&-1&-1&-1&-1&-1♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&15♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&20♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&25♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&30♫-1&-1&9&-1&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&10♫";
+//var textoTabla = "a-z&A-Z&0-9&'&-&>&;&|&Ω&$♫2&3&-1&-1&4&-1&5&6&7&8&-1♫-1&-1&9&10&-1&-1&-1&-1&-1&-1&5♫-1&-1&9&10&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&11&-1&-1&-1&-1&-1♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&15♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&20♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&25♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&30♫-1&-1&9&-1&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&5♫-1&-1&-1&-1&-1&-1&-1&-1&-1&-1&10♫";
 $(document).ready(function(){
 
 	/*Funcion que se manda a llamar para geerar el automata*/
@@ -161,12 +161,10 @@ $(document).ready(function(){
 		console.log(tabla);
 		MostrarTablaAFD(tabla);
 		//creamos un string equivalente a tabla donde cada celda se separa por "comas"
-		//y cada fila es un ;
+		//y cada fila es un ♫
 		var texto = "";
 		for(var i=0;i<tabla.length;i++){
 			for(var j=0;j<tabla[i].length;j++){
-				if(tabla[i][j]==";")
-					tabla[i][j] = "/pc/";
 				if(j+1>=tabla[i].length)
 					texto += tabla[i][j] +"♫";
 				else
