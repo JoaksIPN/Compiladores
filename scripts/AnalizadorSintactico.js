@@ -67,12 +67,47 @@ function CreateGrammarList(file){
 		var t = lex.shift();
 		console.log("t: "+t);
 		if(t == 30){//30 corresponde al token de $ que representa fin de cadena
-			listaReglas.ImprimirLista();
-			console.log(listaReglas);
+			
+			console.log("Lista creada con exito");
 			//return true;
 		}
 	}
+	listaReglas.ImprimirLista();
+	//calculo de first
+	console.log("Calculo de todos los first");
+	VN.forEach(function(value,index){
+			console.log("First de "+value+":");
+			console.log(First(value));
+	});
 	//return false;
+}
+
+function Follow()
+
+function First(omega){
+	//primero buscamos el lado izquierdo que coincida con el simbolo
+	var nodo = listaReglas.nodoInicial;
+	var nodofirst;
+	var res = [];
+	while(nodo!=null){
+		if(nodo.simbolo == omega){
+			//una vez encontrado checamos si el primer elemento de sus lados izquierdos
+			//es terminal
+			nodofirst = nodo.nodoDer;
+			while(nodofirst!=null){
+				if(nodofirst.terminal){
+					//si es terminal lo agregamos al conjunto
+					res.push(nodofirst.simbolo);
+				}else{
+					//si no es terminal se tiene que hacer el first de ese nodo
+					res = res.concat(first(nodofirst.simbolo));
+				}
+				nodofirst = nodofirst.nodoDown;
+			}
+			return res;
+		}
+		nodo = nodo.nodoDown;
+	}
 }
 
 /********************************/
