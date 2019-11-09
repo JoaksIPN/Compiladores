@@ -79,10 +79,95 @@ function CreateGrammarList(file){
 			console.log("First de "+value+":");
 			console.log(First(value));
 	});
+	//calculo de follows
+	//calculo de first
+	console.log("Calculo de todos los follow");
+	VN.forEach(function(value,index){
+			console.log("Follow de "+value+":");
+			console.log(Follow(value));
+	});
 	//return false;
 }
 
-function Follow()
+function Follow(simbol){
+	var nodo = listaReglas.nodoInicial;//recorre lados izquierdos
+	var nodo2; //recorre lados derecos
+	var nodoaux = null;//nodoaux para recorres lados izquerdos extras
+	var nodoAnterior = null;
+	var aux;
+	var primerNT = nodo.simbolo;//primer no terminal
+	var res =[];//follow
+	var i;//posicion del epsilon en el first
+	//si el follow es del simbolo del nodo inicial agregamos $
+	if(nodo.simbolo == simbol){
+		res.push("$");
+	}
+	while(nodo!=null){
+		nodoAnterior = null;
+		nodo2 = nodo.nodoDer;
+		while(nodo2!=null){
+			//si hay otro lado derecho para el mismo lado izq
+			//lo guardamos en aux
+			if(nodo2.nodoDown!=null)
+				nodoaux = nodo2.nodoDown;
+			//si el lado der es igual al sombolo
+			if(nodo2.simbolo == simbol){
+				//checamos si la regla es del tipo aBb o aB preguntando su hay un nodo derecho
+				if(nodo2.nodoDer!=null && nodoAnterior!=null){
+					//es una regla de la forma aBb
+					//si el nodo derecho es terminal lo agregamos
+					if(nodo2.nodoDer.terminal){
+						res.push(nodo2.nodoDer.simbolo);
+					}else{
+						//si no entonces hacemos el first
+						//obtenemos el first del simbolo siguiente
+						aux = First(nodo2.nodoDer.simbolo);
+						//buscamos la posicion donde esta el epsilon
+						i = aux.indexOf("Ω");
+						//si incluye epsilon le concatenamos follow del lado izq
+						//y quitamos el epsilon
+						if(i>=0)
+							//ahora eliminamos el elemento de aux que este en la posicion i
+							aux.splice(i,1);
+						//unimos el follow del lado izq
+						aux = Union(aux,Follow(nodo.simbolo));
+						res = Union(res,aux);
+					}
+				}else if(nodoAnterior!=null){
+					//es una regla de la forma aB
+					//buscamos el follow del lado izq solo si no es el mismo lado izq
+					//del que estamos buscando el follow
+					if(nodo.simbolo!=simbol){
+						res = Union(res,Follow(nodo.simbolo));
+					}
+				}
+			}
+			//si hay un nodo der lo asignamos a nodo2
+			if(nodo2.nodoDer!=null){
+				nodoAnterior = nodo2;
+				nodo2 = nodo2.nodoDer;
+			}else{
+				//si no entonces le asignamos el nodoaux y volvemos null nodoaux
+				nodoAnterior = null;
+				nodo2 = nodoaux;
+				nodoaux = null;
+			}
+		}
+		nodo = nodo.nodoDown;
+	}
+	return res;
+
+}
+
+//funcion que agrega al conjunto ar1 todos los elementos de ar2 sin repetirse
+function Union(ar1,ar2){
+	for(var i=0;i<ar2.length;i++){
+		if(!ar1.includes(ar2[i])){
+			ar1.push(ar2[i]);
+		}
+	}
+	return ar1;
+}
 
 function First(omega){
 	//primero buscamos el lado izquierdo que coincida con el simbolo
@@ -100,7 +185,7 @@ function First(omega){
 					res.push(nodofirst.simbolo);
 				}else{
 					//si no es terminal se tiene que hacer el first de ese nodo
-					res = res.concat(first(nodofirst.simbolo));
+					res = res.concat(First(nodofirst.simbolo));
 				}
 				nodofirst = nodofirst.nodoDown;
 			}
