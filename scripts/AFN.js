@@ -19,6 +19,51 @@ var opciones = {
 };
 var grafo = new vis.Network(contenedor,datos,opciones);
 //limpia contenedor para repintar despues
+function UnirTodo(afns){
+	var tokens = 0;
+	//Creamos AFN con caracter cualquiera
+	var nuevoAFN = new AFN('-1');
+	//borramos alfabeto
+	nuevoAFN.alfabeto = [];
+	//borramos estados
+	nuevoAFN.estados = [];
+	//Creamos estado inicial
+	var e1 = new Estado(numEstados++,true,false,1);
+	//agregamos estado inicial al nuevoAFN
+	nuevoAFN.estados.push(e1);
+	//por cada afn agregamos cada uno de los estados a un nuevo AFN
+	//ademas vamos creando el nuevo alfabeto evitando repetciones
+	for(var i=0;i<afns.length;i++){
+		for(var j=0;j<afns[i].estados.length;j++){
+			nuevoAFN.estados.push(afns[i].estados[j]);
+		}
+		for(var j=0;j<afns[i].alfabeto.length;j++){
+			if(!nuevoAFN.isInAlphabet(afns[i].alfabeto[j]))
+				nuevoAFN.alfabeto.push(afns[i].alfabeto[j]);
+		}
+	}
+	//Del nuevo afn vamos a crear transiciones desde el primer estado que es "e1" a todos los demas estados
+	//identificados como iniciales ademas les quitaremos dicha propiedad para que solo "e1" sea el inicial
+	for(var i=1/*omitimos posicion cero por es "e1"*/;i<nuevoAFN.estados.length;i++){
+		if(nuevoAFN.estados[i].start){
+			nuevoAFN.estados[i].start = false;
+			nuevoAFN.estados[0].transiciones.push(new Transicion(numTransiciones++,'ɛ','ɛ',nuevoAFN.estados[i].id));
+		}
+	}
+	
+	for (var i = 0; i < nuevoAFN.estados.length; i++) {
+		if (nuevoAFN.estados[i].end) {
+			nuevoAFN.estados[i].token = tokens+5;
+			tokens +=5;
+			console.log(nuevoAFN.estados[i].token);
+		}
+	}
+	console.log(nuevoAFN);
+	//retornamos nuevo automata
+	return nuevoAFN;
+}
+
+
 function LimpiarContenedor(){
 	nodos = new vis.DataSet();
 	aristas = new vis.DataSet();
@@ -75,7 +120,7 @@ function DibujarAFN(afn){
 				if(afn.estados[i].transiciones[j].valorMax==afn.estados[i].transiciones[j].valorMin)
 					caracteres = afn.estados[i].transiciones[j].valorMax;
 				else{ //si no
-					caracteres = "("+valorMin+",...,"+valorMax+")";
+					caracteres = "("+afn.estados[i].transiciones[j].valorMin+"-"+afn.estados[i].transiciones[j].valorMax+")";
 				}
 				idTo = afn.estados[i].transiciones[j].idSalida;
 				/**Agremos edge al grafo**/
@@ -92,13 +137,26 @@ function DibujarAFN(afn){
 
 class AFN {
 	constructor(car){
-		this.alfabeto = [car];
+		/*Obtenemos valor max y valor min del string car*/
+		var valores = car.split(",");
+		var aux;
+		if(valores.length>1){
+			if(valores[0]>valores[1]){/*Verificamos que en la posicion 0 este el menos y en la 1 el mayor*/
+				aux = valores[0];
+				valores[0] = valores[1];
+				valores[1] = aux;
+			}
+			this.alfabeto = [(valores[0]+","+valores[1])];
+		}else{
+			valores[1] = valores[0];
+			this.alfabeto = [valores[0]];
+		}
+		
 		this.estados = [];
 		this.id = numAFN++;
-
 		this.estados.push(new Estado(numEstados++,true,false));
 		this.estados.push(new Estado(numEstados++,false,true));
-		var t = new Transicion(numTransiciones++,car,car,this.estados[1].id);
+		var t = new Transicion(numTransiciones++,valores[0],valores[1],this.estados[1].id);
 		var ts = [t];
 		this.estados[0].transiciones = ts;
 	}
@@ -149,7 +207,8 @@ class AFN {
 		}
 		/* se crea nuevo alfabeto*/
 		for(var i=0;i<afn.alfabeto.length;i++)
-			this.alfabeto.push(afn.alfabeto[i]);
+			if(!this.isInAlphabet(afn.alfabeto[i]))
+				this.alfabeto.push(afn.alfabeto[i]);
 		/*Se agregan estados del afn y los dos nuevos estados al array del afn local*/
 		for(var i=0;i<afn.estados.length;i++)
 			this.estados.push(afn.estados[i]);
@@ -261,55 +320,125 @@ class AFN {
 		return this;
 
 	}
+	
+	Opcional(){
+		var t1, t2, t3;
+		var id_start, id_end;
+		var new_start, new_end;
+		//Encontrar el estado inicial y quitarle que sea inicial cx
+		for (var i = 0; i < this.estados.length; i++) {
+			if (this.estados[i].start){
+				id_start = this.estados[i].id;
+				this.estados[i].start=false;
+			}
+		}
+		//Creamos la una nueva transicion
+		t1 = new Transicion(numTransiciones++,'ɛ','ɛ',id_start);
+		//Creamos el nuevo estado inicial
+		new_start = new Estado(numEstados++,true,false);
+		new_start.transiciones.push(t1);
 
-	move_e(estado ,caracter ){
-		var conjuntoR= [];
+		//Creamos el nuevo estado finales
+		new_end = new Estado(numEstados++,false,true);
+		id_end = new_end.id;
+		//Creamos la nueva transicion para el estado finales
+		t2 = new Transicion(numTransiciones,'ɛ','ɛ',id_end);
+
+		for (var i = 0; i < this.estados.length; i++) {
+			if (this.estados[i].end){
+				this.estados[i].transiciones.push(t2);
+				this.estados[i].end = false;
+			}
+		}
+		//Crear la transicion que va del estado inicual al final
+		t3 = new Transicion(numTransiciones++,'ɛ','ɛ',id_end);
+		new_start.transiciones.push(t3);
+		this.estados.push(new_start);
+		this.estados.push(new_end);
+
+		return this;
+	}
+
+	
+	cerradura_e(estado){
+		var stack_estado=[];
+		var conjuntoC=[];
+		var s;
+		stack_estado.push(estado);
+		while (stack_estado.length!=0) {
+			estado=stack_estado.pop();
+			if (conjuntoC.find(function(element) {
+				element=estado;
+			  }))
+			  continue;
+			conjuntoC.push(estado);
+			estado.transiciones.forEach(element => {
+				for(s=element.valorMin;s<=element.valorMin;s++){
+				if (s=="ɛ") {
+					stack_estado.push(this.findEstado(element.idSalida));
+				}}
+			});
+		}
+		return conjuntoC;
+    }
+    
+    mover_e(estado ,caracter ){
+		var conjuntoR=[];
+		var estadoAux;
 		estado.transiciones.forEach(element => {
-			if(element==caracter)
-			conjuntoR=conjuntoR.concat.element.idSalida;
+			if(caracter >=element.valorMin  && caracter<=element.valorMax){
+				estadoAux=this.findEstado(element.idSalida);
+				conjuntoR.push(estadoAux);
+			}
 		});
 		return conjuntoR;
 	}
 	mover(conjuntoS, caracter){
 		var conjuntoR= [];
+		var conjuntoAux= [];
 		conjuntoS.forEach(element => {
-			conjuntoR=conjuntoR.concat.mover_e(element,caracter);
+			conjuntoAux=this.mover_e(element,caracter);
+			if(conjuntoAux.length!=0)
+			conjuntoR=conjuntoR.concat(conjuntoAux);
 		});
 		return conjuntoR;
 	}
 
-	cerradura_e(estado)
-	{
-		var stack_estado=[];
-		var conjuntoC= [];
-		stack_estado.push(estado);
-		while (stack_estado.length!=0) {
-			estado=stack_estado.pop();
-			if (cojuntoC.find(estado)) 
-				continue;
-			conjuntoC.push(estado);
-			estado.transiciones.forEach(element => {
-				if (elment.valorMin='ɛ') {
-					stack_estado.push(findEstado(elment.idSalida));
-				}
-			});
-		}
-		return conjuntoC;
-		
+	
+	ir_a(conjuntoS,caracter){
+		var conjuntoR= [];
+		var conjuntoIR= [];
+		var conjuntoaux= [];
+		conjuntoR=this.mover(conjuntoS,caracter);	
+		if(conjuntoR.length!=0){
+		conjuntoR.forEach(element => {
+			conjuntoaux=this.cerradura_e(element);
+			if(conjuntoaux.length!=0)
+			conjuntoIR=conjuntoIR.concat(conjuntoaux);
+		});}
+		return conjuntoIR;
 	}
 	findEstado(idS){
 		for(var i=0;i<this.estados.length;i++){
-			if(this.estados[i].id=idS)
+			if(this.estados[i].id==idS)
 				break;
 				
 		}
 		return this.estados[i];
 	}
 
-	ir_a(conjuntoS,caracter){
-		return cerradura_e(mover(conjuntoS,caracter));
+	searchFinal(){
+		var conjuntoF= [];
+		for(var i=0;i<this.estados.length;i++){
+			if(this.estados[i].end)
+				conjuntoF.push(this.estados[i].id);
+		}
+		console.log(conjuntoF.sort());
+		return conjuntoF;
 		
 	}
+
+	
 	/*retorna el index del array de estados en el que se encuentra el estado final*/
 	findEndIndex(){
 		for(var i=0;i<this.estados.length;i++){
