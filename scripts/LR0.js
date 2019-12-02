@@ -29,6 +29,7 @@ function EvaluarLR(tabla,cadena,nombreTabla,nombreResultado){
 	var pila = [];//pila de instrucciones
 	var topPila;
 	var topCad;
+	var elementoAux;
 	console.log(tabla);
 	//llenamos el array cad
 	for(let i=0;i<cadena.length;i++)
@@ -42,7 +43,8 @@ function EvaluarLR(tabla,cadena,nombreTabla,nombreResultado){
 		pila.push(topPila);
 		topCad = cad.shift();
 		cad.unshift(topCad);
-		accion = tabla[topPila][ObtenerColumnaTablaLR0(topCad)];
+		elementoAux = tabla[topPila][ObtenerColumnaTablaLR0(topCad)];
+		accion = elementoAux.replace("'","");
 		console.log("|"+topPila+"|"+topCad+"|"+accion+"|");
 		dibujarFila(pila,cad,accion,nombreTabla);
 		if(accion[0]=='d'){
@@ -80,7 +82,8 @@ function EvaluarLR(tabla,cadena,nombreTabla,nombreResultado){
 			pila.push(""+reduccion[0]);
 			console.log(pila);
 			//despues ponemos el contenido de la tabla[topPila][no terminal]
-			var aux = tabla[topPila][ObtenerColumnaTablaLR0(reduccion[0])];
+			elementoAux = tabla[topPila][ObtenerColumnaTablaLR0(reduccion[0])];
+			var aux = elementoAux.replace("'","");
 			console.log("Insertamos a la pila desde la tabla: "+aux);
 			pila.push(aux);
 			console.log(pila);
@@ -215,7 +218,7 @@ function LR0(reglas){
 					conjuntos.push(aux);
 					//llenando la tabla
 					if(VN.includes(alfa)){
-						tablaR0[i][ObtenerColumnaTablaLR0(alfa)] = countConjuntos;
+						tablaR0[i][ObtenerColumnaTablaLR0(alfa)] = ""+countConjuntos;
 						console.log("tablaR0["+i+"]["+ObtenerColumnaTablaLR0(alfa)+"] = "+countConjuntos);
 					}else{
 						tablaR0[i][ObtenerColumnaTablaLR0(alfa)] = "d"+countConjuntos;
@@ -239,7 +242,7 @@ function LR0(reglas){
 				console.log("Llenando tabla con cerradura ya calculada");
 				//llenando la tabla
 				if(VN.includes(alfa)){
-					tablaR0[i][ObtenerColumnaTablaLR0(alfa)] = simbIndex;
+					tablaR0[i][ObtenerColumnaTablaLR0(alfa)] = ""+simbIndex;
 					console.log("tablaR0["+i+"]["+ObtenerColumnaTablaLR0(alfa)+"] = "+simbIndex);
 				}else{
 					tablaR0[i][ObtenerColumnaTablaLR0(alfa)] = "d"+simbIndex;

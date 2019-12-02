@@ -15,6 +15,11 @@ $(document).ready(function(){
 		var exp = $("#inputExpresionLR1").val();
 		EvaluarLR(tablaR1,exp,"tablaEvaluarLR1","ResultadoLR1");
 	});
+	$("#btnEvaluarLALR").on("click",function(){
+		console.log("Evaluando expresion con LALR");
+		var exp = $("#inputExpresionLALR").val();
+		EvaluarLR(tablaLALR,exp,"tablaEvaluarLALR","ResultadoLALR");
+	});
 	$("#cerrarModalLR1").on("click",function(){
 		$("#tablaLR1 thead").empty();
 		$("#tablaLR1 tbody").empty();
@@ -131,17 +136,17 @@ function LR1(reglas){
 				console.log("Nueva cerradura");
 				//si el alfa es undefined entonce no se calcula su IrA
 				if(alfa!=undefined){
-					console.log("Calculando IrA de");
-					ImprimirArregloItems(itemSeparados[j]);
+					//console.log("Calculando IrA de");
+					//ImprimirArregloItems(itemSeparados[j]);
 					aux = IrAConjuntoLR1(itemSeparados[j],reglaAumentada);
-					console.log("Nuevo conjunto");
-					ImprimirArregloItems(aux);
+					//console.log("Nuevo conjunto");
+					//ImprimirArregloItems(aux);
 					conjuntos.push(aux);
-					console.log("Actualizacion conjuntos");
-					ImprimirConjuntos(conjuntos);
+					//console.log("Actualizacion conjuntos");
+					//ImprimirConjuntos(conjuntos);
 					//llenando tabla
 					if(VN.includes(alfa)){
-						tablaR1[i][ObtenerColumnaTablaLR1(alfa)] = countConjuntos;
+						tablaR1[i][ObtenerColumnaTablaLR1(alfa)] = ""+countConjuntos;
 						console.log("tablaR1["+i+"]["+ObtenerColumnaTablaLR1(alfa)+"]= "+countConjuntos);
 					}else{
 						tablaR1[i][ObtenerColumnaTablaLR1(alfa)] = "d"+countConjuntos;
@@ -162,7 +167,7 @@ function LR1(reglas){
 				console.log("cerradura ya calculada");
 				console.log("LLenando tabla con la cerradura ya calculada");
 				if(VN.includes(alfa)){
-							tablaR1[i][ObtenerColumnaTablaLR1(alfa)] = simbIndex;
+							tablaR1[i][ObtenerColumnaTablaLR1(alfa)] = ""+simbIndex;
 					console.log("tablaR1["+i+"]["+ObtenerColumnaTablaLR1(alfa)+"] = "+simbIndex);
 				}else{
 					tablaR1[i][ObtenerColumnaTablaLR0(alfa)] = "d"+simbIndex;
@@ -212,46 +217,89 @@ function LR1(reglas){
 	let flag = false;//bandera para indicar si fue encontrado el kernel
 	let indexKernel;
 	let fila;
+	let uniones = [];
+	let eliminados = [];
 	for(let i=0;i<historialCerraduras.length;i++){
-		tamrow = VT.length+VN.length+1;
-		row = new Array(tamrow);
-		//Llenando la fila
-		for(let j=0;j<row.length;j++)
-			row[j] = tablaR1[i][j];
-		tablaLALR.push(row);
-		indexKernel = BuscarKernelEnHistorialLR1(historialCerraduras[i],i+1);
-		if(indexKernel>=0){
-			console.log("Kernel encontrado en: "+indexKernel);
-			console.log("Combinando estado "+indexKernel);
-			/*fila = "";
-			for(let j=0;j<tablaR1[indexKernel].length;j++)
-				fila += tablaR1[indexKernel][j];
-			console.log(fila);*/
-			console.log("Con el estado original: "+i);
-			/*fila = "";
-			for(let j=0;j<tablaLALR[i].length;j++)
-				fila += tablaLALR[i][j];
-			console.log(fila);
-			for(let j=0;j<tablaLALR[i].length;j++){
-				if(tablaLALR[i][j]=="-"){
-					tablaLALR[i][j]=tablaR1[indexKernel][j];
+		//console.log("tam LALR: "+tablaLALR.length);
+		if(!eliminados.includes(i)){
+			tamrow = VT.length+VN.length+1;
+			row = new Array(tamrow);
+			//Llenando la fila
+			for(let j=0;j<row.length;j++)
+				row[j] = tablaR1[i][j];
+			tablaLALR.push(row);
+			indexKernel = BuscarKernelEnHistorialLR1(historialCerraduras[i],i+1);
+			if(indexKernel>=0){
+				/*console.log("Kernel encontrado en: "+indexKernel);
+				console.log("Combinando estado "+indexKernel);
+				console.log("Con el estado original: "+i);*/
+				uniones.push(i);
+				eliminados.push(indexKernel);
+
+				for(let j=0;j<tablaLALR[tablaLALR.length-1].length;j++){
+					if(tablaLALR[tablaLALR.length-1][j]=="-"){
+						tablaLALR[tablaLALR.length-1][j]=tablaR1[indexKernel][j];
+					}
 				}
+				//console.log("Comparando: "+i+" - "+(tablaLALR.length-1));
+				if(i!=(tablaLALR.length-1)){
+					for(let x=0;x<tablaLALR.length;x++){
+						console.log(tablaLALR[x]);
+						do{
+							//buscamos en enteros
+							index = tablaLALR[x].indexOf(""+i);
+							if(index>=0){
+								tablaLALR[x][index] = "'"+(tablaLALR.length-1);
+							}
+							index = tablaLALR[x].indexOf("d"+i);
+							if(index>=0){
+								tablaLALR[x][index] = "d'"+(tablaLALR.length-1);
+							}
+							index = tablaLALR[x].indexOf("r"+i);
+							if(index>=0){
+								tablaLALR[x][index] = "r'"+(tablaLALR.length-1);
+							}
+						}while(index>=0);
+					}
+				}
+			}else{
+				console.log("Kernel no encontrado");
 			}
-			console.log("Resultado: ");
-			fila = "";
-			for(let j=0;j<tablaLALR[i].length;j++)
-				fila += tablaLALR[i][j];
-			console.log(fila);*/
-			historialCerraduras.splice(indexKernel,1);
-		}else{
-			console.log("Kernel no encontrado");
 		}
 	}
-	ImprimirTabla(tablaLALR);
+	//rescritura de los estados
+	let from;
+	let to;
+	for(let i=0;i<eliminados.length;i++){
+		from = uniones[i];
+		to = eliminados[i];
+		console.log("Sustituyendo "+to+" por "+from)
+		for(let x=0;x<tablaLALR.length;x++){
+			console.log(tablaLALR[x]);
+			do{
+				//buscamos en enteros
+				index = tablaLALR[x].indexOf(""+to);
+				if(index>=0){
+					tablaLALR[x][index] = ""+from;
+				}
+				index = tablaLALR[x].indexOf("d"+to);
+				if(index>=0){
+					tablaLALR[x][index] = "d"+from;
+				}
+				index = tablaLALR[x].indexOf("r"+to);
+				if(index>=0){
+					tablaLALR[x][index] = "d"+from;
+				}
+			}while(index>=0);
+		}
+	}
+
 
 	/*Imprimiendo resultados*/
-	ImprimirConjuntos(conjuntos);
+	/*ImprimirConjuntos(conjuntos);*/
+	ImprimirTabla(tablaLALR);
 	MostrarTablaLR(tablaR1,"tablaLR1");
+	MostrarTablaLR(tablaLALR,"tablaLALR");
 	$("#modalTablaLR1").modal("show");
 	return tablaR1;
 }
@@ -337,10 +385,10 @@ function CerraduraLR1(item,reglas){
 function BuscarEnHistorialLR1(items){
 	console.log("Buscando: ");
 	ImprimirArregloItems(items);
-	console.log("En historial: ");
+	/*console.log("En historial: ");
 	for(let i=0;i<historialCerraduras.length;i++){
 		ImprimirArregloItems(historialCerraduras[i]);
-	}
+	}*/
 
 	for(let i=0;i<historialCerraduras.length;i++){
 		if(CompararArregloItems(historialCerraduras[i],items)){

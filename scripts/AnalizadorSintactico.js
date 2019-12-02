@@ -31,6 +31,7 @@ $(document).ready(function(){
 			contenido = this.result;
 			console.log(contenido);
 			CreateGrammarList(contenido);
+		console.log(First("F"));
 		}
 		fr.readAsText(this.files[0]);
 	});
@@ -165,7 +166,8 @@ function First(omega){
 					res.push(nodofirst.simbolo);
 				}else{
 					//si no es terminal se tiene que hacer el first de ese nodo
-					res = res.concat(First(nodofirst.simbolo));
+					if(omega!=nodofirst.simbolo)
+						res = res.concat(First(nodofirst.simbolo));
 				}
 				nodofirst = nodofirst.nodoDown;
 			}
